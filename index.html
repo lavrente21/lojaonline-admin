@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entrar — Admin Lúmina</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-body">
+<div style="max-width:380px;margin:100px auto;background:var(--branco);border:1px solid var(--linha);border-radius:12px;padding:36px">
+  <div class="admin-logo" style="color:var(--marrom);margin-bottom:6px">Lúmina · Admin</div>
+  <p style="font-size:13.5px;color:#5B4C43;margin-bottom:24px">Acesso restrito à equipa da loja.</p>
+  <div class="formulario" style="max-width:none">
+    <div class="campo-formulario"><label>E-mail</label><input type="email" id="lg-email" value="ana@lumina-beauty.com"></div>
+    <div class="campo-formulario"><label>Palavra-passe</label><input type="password" id="lg-senha"></div>
+    <button class="btn btn-primario" style="width:100%" id="lg-botao">Entrar</button>
+    <p id="lg-erro" style="display:none;color:#B14B33;font-size:13.5px;margin-top:10px"></p>
+  </div>
+  <p class="link-secundario"><a href="#">Esqueci-me da palavra-passe</a></p>
+</div>
+<script src="js/api.js"></script>
+<script>
+  document.getElementById('lg-botao').addEventListener('click', async () => {
+    const email = document.getElementById('lg-email').value.trim();
+    const palavraPasse = document.getElementById('lg-senha').value;
+    const erroEl = document.getElementById('lg-erro');
+    try{
+      const resultado = await apiFetch('/auth/admin/login', { method: 'POST', body: JSON.stringify({ email, palavraPasse }) });
+      guardarTokenAdmin(resultado.token);
+      window.location.href = 'dashboard.html';
+    }catch(e){
+      erroEl.textContent = e.message; erroEl.style.display = 'block';
+    }
+  });
+</script>
+</body>
+</html>

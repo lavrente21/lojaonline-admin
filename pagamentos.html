@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pagamentos — Admin Lúmina</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-body">
+<script src="js/api.js"></script>
+<script>exigirLoginAdmin();</script>
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+  <span class="admin-logo">Lúmina · Admin</span>
+  <div class="admin-nav-grupo"><h5>Visão geral</h5><a href="dashboard.html" class="">Dashboard</a></div><div class="admin-nav-grupo"><h5>Catálogo</h5><a href="produtos.html" class="">Produtos</a>
+<a href="categorias.html" class="">Categorias</a>
+<a href="stock.html" class="">Stock</a></div><div class="admin-nav-grupo"><h5>Vendas</h5><a href="pedidos.html" class="">Pedidos</a>
+<a href="devolucoes.html" class="">Devoluções</a>
+<a href="assinaturas.html" class="">Assinaturas</a></div><div class="admin-nav-grupo"><h5>Clientes</h5><a href="clientes.html" class="">Clientes</a>
+<a href="cupons.html" class="">Cupões</a>
+<a href="avaliacoes.html" class="">Avaliações</a>
+<a href="atendimento.html" class="">Atendimento</a></div><div class="admin-nav-grupo"><h5>Conteúdo</h5><a href="conteudo.html" class="">Blog e guias</a>
+<a href="newsletter.html" class="">Newsletter</a></div><div class="admin-nav-grupo"><h5>Loja</h5><a href="pagamentos.html" class="ativo">Pagamentos</a>
+<a href="envios.html" class="">Envios</a>
+<a href="relatorios.html" class="">Relatórios</a>
+<a href="configuracoes.html" class="">Configurações</a></div>
+</aside>
+  <main class="admin-main">
+    <div class="admin-topo">
+      <h1>Pagamentos</h1>
+      <div class="admin-usuario">👤 Ana (gestora) &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
+    </div>
+    
+<div class="grade-stats" style="grid-template-columns:repeat(3,1fr)">
+  <div class="cartao-stat"><div class="rotulo-stat">Recebido (mês)</div><div class="valor-stat">9.782 €</div></div>
+  <div class="cartao-stat"><div class="rotulo-stat">Reembolsado (mês)</div><div class="valor-stat">184 €</div></div>
+  <div class="cartao-stat"><div class="rotulo-stat">Pendente</div><div class="valor-stat">312 €</div></div>
+</div>
+<div class="painel-admin">
+  <h2>Métodos de pagamento ligados</h2>
+  <p style="font-size:14px;margin-bottom:8px">✅ Stripe — conectado</p>
+  <p style="font-size:14px;margin-bottom:8px">✅ PayPal — conectado</p>
+  <p style="font-size:14px">⚪ Klarna — por configurar</p>
+</div>
+<div class="painel-admin">
+  <h2>Transações recentes</h2>
+  <table class="tabela-simples">
+    <tr><th>Encomenda</th><th>Método</th><th>Valor</th><th>Estado</th></tr>
+    <tr><td>#LUM-48213</td><td>Cartão (Stripe)</td><td>37,80 €</td><td><span class="tag-ok">Pago</span></td></tr>
+    <tr><td>#LUM-48210</td><td>PayPal</td><td>52,40 €</td><td><span class="tag-ok">Pago</span></td></tr>
+  </table>
+</div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatórios — Admin Lúmina</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-body">
+<script src="js/api.js"></script>
+<script>exigirLoginAdmin();</script>
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+  <span class="admin-logo">Lúmina · Admin</span>
+  <div class="admin-nav-grupo"><h5>Visão geral</h5><a href="dashboard.html" class="">Dashboard</a></div><div class="admin-nav-grupo"><h5>Catálogo</h5><a href="produtos.html" class="">Produtos</a>
+<a href="categorias.html" class="">Categorias</a>
+<a href="stock.html" class="">Stock</a></div><div class="admin-nav-grupo"><h5>Vendas</h5><a href="pedidos.html" class="">Pedidos</a>
+<a href="devolucoes.html" class="">Devoluções</a>
+<a href="assinaturas.html" class="">Assinaturas</a></div><div class="admin-nav-grupo"><h5>Clientes</h5><a href="clientes.html" class="">Clientes</a>
+<a href="cupons.html" class="">Cupões</a>
+<a href="avaliacoes.html" class="">Avaliações</a>
+<a href="atendimento.html" class="">Atendimento</a></div><div class="admin-nav-grupo"><h5>Conteúdo</h5><a href="conteudo.html" class="">Blog e guias</a>
+<a href="newsletter.html" class="">Newsletter</a></div><div class="admin-nav-grupo"><h5>Loja</h5><a href="pagamentos.html" class="">Pagamentos</a>
+<a href="envios.html" class="">Envios</a>
+<a href="relatorios.html" class="ativo">Relatórios</a>
+<a href="configuracoes.html" class="">Configurações</a></div>
+</aside>
+  <main class="admin-main">
+    <div class="admin-topo">
+      <h1>Relatórios</h1>
+      <div class="admin-usuario">👤 Ana (gestora) &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
+    </div>
+    
+<div class="painel-admin">
+  <h2>Produtos mais vendidos (mês)</h2>
+  <table class="tabela-simples">
+    <tr><th>Produto</th><th>Unidades vendidas</th><th>Receita</th></tr>
+    <tr><td>Sérum de vitamina C 20%</td><td>142</td><td>4.671,80 €</td></tr>
+    <tr><td>Máscara capilar reparadora</td><td>98</td><td>2.401,00 €</td></tr>
+    <tr><td>Base fluida cobertura média</td><td>76</td><td>2.052,00 €</td></tr>
+  </table>
+</div>
+<div class="painel-admin">
+  <h2>Margem por categoria</h2>
+  <table class="tabela-simples">
+    <tr><th>Categoria</th><th>Margem média</th></tr>
+    <tr><td>Skincare</td><td>54%</td></tr>
+    <tr><td>Maquilhagem</td><td>48%</td></tr>
+    <tr><td>Hair care</td><td>51%</td></tr>
+  </table>
+</div>
+
+  </main>
+</div>
+</body>
+</html>

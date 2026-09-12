@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Novo produto — Admin Lúmina</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-body">
+<script src="js/api.js"></script>
+<script>exigirLoginAdmin();</script>
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+  <span class="admin-logo">Lúmina · Admin</span>
+  <div class="admin-nav-grupo"><h5>Visão geral</h5><a href="dashboard.html" class="">Dashboard</a></div><div class="admin-nav-grupo"><h5>Catálogo</h5><a href="produtos.html" class="ativo">Produtos</a>
+<a href="categorias.html" class="">Categorias</a>
+<a href="stock.html" class="">Stock</a></div><div class="admin-nav-grupo"><h5>Vendas</h5><a href="pedidos.html" class="">Pedidos</a>
+<a href="devolucoes.html" class="">Devoluções</a>
+<a href="assinaturas.html" class="">Assinaturas</a></div><div class="admin-nav-grupo"><h5>Clientes</h5><a href="clientes.html" class="">Clientes</a>
+<a href="cupons.html" class="">Cupões</a>
+<a href="avaliacoes.html" class="">Avaliações</a>
+<a href="atendimento.html" class="">Atendimento</a></div><div class="admin-nav-grupo"><h5>Conteúdo</h5><a href="conteudo.html" class="">Blog e guias</a>
+<a href="newsletter.html" class="">Newsletter</a></div><div class="admin-nav-grupo"><h5>Loja</h5><a href="pagamentos.html" class="">Pagamentos</a>
+<a href="envios.html" class="">Envios</a>
+<a href="relatorios.html" class="">Relatórios</a>
+<a href="configuracoes.html" class="">Configurações</a></div>
+</aside>
+  <main class="admin-main">
+    <div class="admin-topo">
+      <h1>Novo produto</h1>
+      <div class="admin-usuario">👤 Ana (gestora) &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
+    </div>
+    
+<div class="painel-admin">
+  <h2>Informação geral</h2>
+  <div class="grade-form-admin">
+    <div class="campo-formulario"><label>Nome do produto</label><input type="text" id="pn-nome"></div>
+    <div class="campo-formulario"><label>Categoria</label>
+      <select id="pn-categoria"><option>Skincare</option><option>Hair care</option><option>Body care</option><option>Maquilhagem</option></select>
+    </div>
+    <div class="campo-formulario" style="grid-column:1/-1"><label>Descrição (uso interno, ainda não exibida na loja)</label><textarea rows="3" id="pn-descricao"></textarea></div>
+  </div>
+</div>
+<div class="painel-admin">
+  <h2>Fornecedor e preço</h2>
+  <div class="grade-form-admin">
+    <div class="campo-formulario"><label>Fornecedor</label>
+      <select id="pn-fornecedor"><option value="cj">CJ Dropshipping</option><option value="buckydrop">Buckydrop</option></select>
+    </div>
+    <div class="campo-formulario"><label>ID / link no fornecedor</label><input type="text" id="pn-id-fornecedor" placeholder="ex: CJ-8823741"></div>
+    <div class="campo-formulario"><label>Preço de custo (€)</label><input type="number" step="0.01" id="pn-custo" value="0"></div>
+    <div class="campo-formulario"><label>Preço de venda (€)</label><input type="number" step="0.01" id="pn-venda" value="0"></div>
+    <div class="campo-formulario"><label>Stock inicial</label><input type="number" id="pn-stock" value="0"></div>
+  </div>
+</div>
+<p id="pn-erro" style="display:none;color:#B14B33;font-size:13.5px;margin-bottom:12px"></p>
+<button class="btn btn-primario" id="pn-botao">Criar produto</button>
+<script>
+  document.getElementById('pn-botao').addEventListener('click', async () => {
+    const erroEl = document.getElementById('pn-erro');
+    const corpo = {
+      nome: document.getElementById('pn-nome').value.trim(),
+      categoria: document.getElementById('pn-categoria').value,
+      fornecedor: document.getElementById('pn-fornecedor').value,
+      idFornecedor: document.getElementById('pn-id-fornecedor').value.trim(),
+      precoCustoEUR: parseFloat(document.getElementById('pn-custo').value) || 0,
+      precoVendaEUR: parseFloat(document.getElementById('pn-venda').value) || 0,
+      stock: parseInt(document.getElementById('pn-stock').value) || 0
+    };
+    if(!corpo.nome){ erroEl.textContent = 'O nome do produto é obrigatório.'; erroEl.style.display = 'block'; return; }
+    try{
+      await apiFetch('/produtos', { method: 'POST', body: JSON.stringify(corpo) });
+      window.location.href = 'produtos.html';
+    }catch(e){
+      erroEl.textContent = e.message; erroEl.style.display = 'block';
+    }
+  });
+</script>
+
+  </main>
+</div>
+</body>
+</html>
