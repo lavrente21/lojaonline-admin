@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = 'https://lojaonline-backend.onrender.com';
 
 function obterTokenAdmin() { return localStorage.getItem('lumina_admin_token'); }
 function guardarTokenAdmin(t) { localStorage.setItem('lumina_admin_token', t); }
