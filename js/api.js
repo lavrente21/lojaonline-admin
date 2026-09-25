@@ -17,7 +17,12 @@ async function apiFetch(caminho, opcoes = {}) {
   const resposta = await fetch(API_BASE_URL + caminho, Object.assign({}, opcoes, { headers }));
   let dados = {};
   try { dados = await resposta.json(); } catch (e) {}
-  if (resposta.status === 401 || resposta.status === 403) {
+  // O pedido de login também pode dar 401 — mas nesse caso é porque o
+  // e-mail/palavra-passe estão errados, não porque a sessão expirou.
+  // Só tratamos como "sessão expirada" quando já tínhamos um token guardado
+  // e o pedido não é o próprio login.
+  const ePedidoDeLogin = caminho.includes('/login');
+  if (!ePedidoDeLogin && token && (resposta.status === 401 || resposta.status === 403)) {
     limparTokenAdmin();
     window.location.href = 'index.html';
     throw new Error('Sessão expirada.');
