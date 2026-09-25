@@ -32,6 +32,18 @@
     </div>
     
 <div class="painel-admin">
+  <h2>Importar da CJ Dropshipping</h2>
+  <p style="font-size:13.5px;color:#6b6b6b;margin-top:-6px;margin-bottom:12px">Cola o ID do produto ou o link da página do produto na CJ. Os campos abaixo são pré-preenchidos — revê o preço de venda antes de criar.</p>
+  <div class="grade-form-admin">
+    <div class="campo-formulario" style="grid-column:1/-1"><label>ID ou link do produto na CJ</label><input type="text" id="pn-cj-id" placeholder="ex: 04A22450-67F0-4617-A132-E7AE7F8963B0 ou https://cjdropshipping.com/product/...-p-....html"></div>
+  </div>
+  <button class="btn" id="pn-cj-buscar" type="button">Buscar produto na CJ</button>
+  <span id="pn-cj-estado" style="margin-left:10px;font-size:13.5px"></span>
+  <div id="pn-cj-preview" style="display:none;margin-top:14px;gap:12px;align-items:flex-start" >
+    <img id="pn-cj-imagem" src="" alt="" style="width:84px;height:84px;object-fit:cover;border-radius:8px;border:1px solid #e5e0d8">
+  </div>
+</div>
+<div class="painel-admin">
   <h2>Informação geral</h2>
   <div class="grade-form-admin">
     <div class="campo-formulario"><label>Nome do produto</label><input type="text" id="pn-nome"></div>
@@ -56,17 +68,69 @@
 <p id="pn-erro" style="display:none;color:#B14B33;font-size:13.5px;margin-bottom:12px"></p>
 <button class="btn btn-primario" id="pn-botao">Criar produto</button>
 <script>
+  // Guarda os dados completos da última busca na CJ (imagens, descrição, sku),
+  // para irem juntos quando o produto for de facto criado.
+  let ultimoProdutoCJ = null;
+
+  document.getElementById('pn-cj-buscar').addEventListener('click', async () => {
+    const estadoEl = document.getElementById('pn-cj-estado');
+    const idOuLink = document.getElementById('pn-cj-id').value.trim();
+    if(!idOuLink){ estadoEl.style.color = '#B14B33'; estadoEl.textContent = 'Indica o ID ou o link do produto.'; return; }
+    estadoEl.style.color = '#6b6b6b';
+    estadoEl.textContent = 'A procurar na CJ...';
+    try{
+      const p = await apiFetch('/produtos/importar/cj?id=' + encodeURIComponent(idOuLink));
+      ultimoProdutoCJ = p;
+
+      document.getElementById('pn-nome').value = p.nome || '';
+      document.getElementById('pn-descricao').value = p.descricao || '';
+      document.getElementById('pn-fornecedor').value = 'cj';
+      document.getElementById('pn-id-fornecedor').value = p.idFornecedor || '';
+      document.getElementById('pn-custo').value = p.precoCustoEUR || 0;
+      document.getElementById('pn-venda').value = p.precoVendaSugeridoEUR || 0;
+
+      // Se a categoria da CJ corresponder a uma opção existente, seleciona-a;
+      // caso contrário deixa como está para o admin escolher manualmente.
+      const selectCategoria = document.getElementById('pn-categoria');
+      const opcaoExistente = Array.from(selectCategoria.options).find(o => o.value.toLowerCase() === (p.categoria || '').toLowerCase());
+      if (opcaoExistente) selectCategoria.value = opcaoExistente.value;
+
+      if (p.imagemPrincipal) {
+        document.getElementById('pn-cj-imagem').src = p.imagemPrincipal;
+        document.getElementById('pn-cj-preview').style.display = 'flex';
+      } else {
+        document.getElementById('pn-cj-preview').style.display = 'none';
+      }
+
+      estadoEl.style.color = '#3E7A4C';
+      estadoEl.textContent = 'Produto encontrado — revê os campos abaixo antes de criar.';
+    }catch(e){
+      ultimoProdutoCJ = null;
+      estadoEl.style.color = '#B14B33';
+      estadoEl.textContent = e.message;
+    }
+  });
+
   document.getElementById('pn-botao').addEventListener('click', async () => {
     const erroEl = document.getElementById('pn-erro');
+    const idFornecedorAtual = document.getElementById('pn-id-fornecedor').value.trim();
     const corpo = {
       nome: document.getElementById('pn-nome').value.trim(),
       categoria: document.getElementById('pn-categoria').value,
       fornecedor: document.getElementById('pn-fornecedor').value,
-      idFornecedor: document.getElementById('pn-id-fornecedor').value.trim(),
+      idFornecedor: idFornecedorAtual,
       precoCustoEUR: parseFloat(document.getElementById('pn-custo').value) || 0,
       precoVendaEUR: parseFloat(document.getElementById('pn-venda').value) || 0,
-      stock: parseInt(document.getElementById('pn-stock').value) || 0
+      stock: parseInt(document.getElementById('pn-stock').value) || 0,
+      descricao: document.getElementById('pn-descricao').value.trim()
     };
+    // Só inclui os dados extra da CJ (imagens/sku) se ainda corresponderem
+    // ao produto que está atualmente no formulário.
+    if (ultimoProdutoCJ && ultimoProdutoCJ.idFornecedor === idFornecedorAtual) {
+      corpo.imagemUrl = ultimoProdutoCJ.imagemPrincipal || '';
+      corpo.imagens = ultimoProdutoCJ.imagens || [];
+      corpo.skuFornecedor = ultimoProdutoCJ.sku || '';
+    }
     if(!corpo.nome){ erroEl.textContent = 'O nome do produto é obrigatório.'; erroEl.style.display = 'block'; return; }
     try{
       await apiFetch('/produtos', { method: 'POST', body: JSON.stringify(corpo) });
