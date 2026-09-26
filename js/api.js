@@ -1,4 +1,4 @@
-const API_BASE_URL=(window.LUMINA_API_BASE_URL||'https://lumina-api.onrender.com/api').replace(/\/$/,'');
+const API_BASE_URL=(window.LUMINA_API_BASE_URL||'https://lojaonline-backend.onrender.com/api').replace(/\/$/,'');
 function obterTokenAdmin(){return localStorage.getItem('lumina_admin_token')}function guardarTokenAdmin(t){localStorage.setItem('lumina_admin_token',t)}function limparTokenAdmin(){localStorage.removeItem('lumina_admin_token')}
 function exigirLoginAdmin(){if(!obterTokenAdmin())window.location.href='index.html'}
 async function apiFetch(caminho,opcoes={}){const token=obterTokenAdmin();const headers=Object.assign({},opcoes.headers||{});if(!(opcoes.body instanceof FormData))headers['Content-Type']='application/json';if(token)headers.Authorization='Bearer '+token;const r=await fetch(API_BASE_URL+caminho,{...opcoes,headers});let d={};try{d=await r.json()}catch{}const login=caminho.includes('/login');if(!login&&token&&(r.status===401||r.status===403)){limparTokenAdmin();window.location.href='index.html';throw new Error('Sessão expirada.')}if(!r.ok)throw new Error(d.erro||'Erro ao contactar o servidor.');return d}
