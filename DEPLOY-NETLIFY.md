@@ -1,9 +1,7 @@
-# Admin — Netlify
+# Lúmina — Admin Netlify
 
-Publique esta pasta como site estático separado no Netlify. O login e todas as operações administrativas passam pela API Render; não coloque credenciais de banco, Stripe, CJ, BuckyDrop ou AppyPay neste site.
-
-## API de produção
-
-O Admin usa por defeito `https://lumina-api.onrender.com/api`. Se o serviço Render tiver outro URL, defina `window.LUMINA_API_BASE_URL` antes de `js/api.js`.
-
-Nunca coloque segredos de integração no Netlify.
+1. Publique esta pasta no Netlify.
+2. O Admin é estático e não usa Vite nem build step.
+3. A API de produção está definida em `js/api.js` como `https://lojaonline-backend.onrender.com/api`.
+4. Se precisar de outro backend, defina `window.LUMINA_API_BASE_URL` antes de carregar `js/api.js`.
+5. Nunca coloque chaves de Supabase, CJ, BuckyDrop, Stripe ou AppyPay no Netlify.
