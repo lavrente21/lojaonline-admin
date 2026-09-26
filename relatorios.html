@@ -31,24 +31,7 @@
       <div class="admin-usuario">👤 Ana (gestora) &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
     </div>
     
-<div class="painel-admin">
-  <h2>Produtos mais vendidos (mês)</h2>
-  <table class="tabela-simples">
-    <tr><th>Produto</th><th>Unidades vendidas</th><th>Receita</th></tr>
-    <tr><td>Sérum de vitamina C 20%</td><td>142</td><td>4.671,80 €</td></tr>
-    <tr><td>Máscara capilar reparadora</td><td>98</td><td>2.401,00 €</td></tr>
-    <tr><td>Base fluida cobertura média</td><td>76</td><td>2.052,00 €</td></tr>
-  </table>
-</div>
-<div class="painel-admin">
-  <h2>Margem por categoria</h2>
-  <table class="tabela-simples">
-    <tr><th>Categoria</th><th>Margem média</th></tr>
-    <tr><td>Skincare</td><td>54%</td></tr>
-    <tr><td>Maquilhagem</td><td>48%</td></tr>
-    <tr><td>Hair care</td><td>51%</td></tr>
-  </table>
-</div>
+<div class="painel-admin"><div class="secao-editor-titulo"><div><h2>Rentabilidade do catálogo</h2><span>Calculado a partir do custo, preço de venda e stock atuais</span></div></div><div class="grade-stats"><div class="cartao-stat"><div class="rotulo-stat">Produtos ativos</div><div class="valor-stat" id="rp-produtos">—</div></div><div class="cartao-stat"><div class="rotulo-stat">Margem média</div><div class="valor-stat" id="rp-margem">—</div></div><div class="cartao-stat"><div class="rotulo-stat">Receita potencial</div><div class="valor-stat" id="rp-receita">—</div></div><div class="cartao-stat"><div class="rotulo-stat">Lucro potencial</div><div class="valor-stat" id="rp-lucro">—</div></div></div></div><div class="painel-admin"><h2>Margem por categoria</h2><div class="tabela-scroll"><table class="tabela-simples" id="rp-categorias"><tr><th>Categoria</th><th>Produtos</th><th>Margem média</th><th>Lucro potencial stock</th></tr><tr><td colspan="4">A carregar…</td></tr></table></div></div><div class="painel-admin"><h2>Como interpretar</h2><p class="campo-ajuda">Lucro potencial do stock = (preço de venda − custo) × stock atual. Não inclui impostos, taxas de pagamento, publicidade, devoluções ou portes, portanto é uma margem bruta de catálogo e não lucro líquido.</p></div><script>(async()=>{try{const m=await apiFetch('/produtos/admin/metrics');const r=m.resumo;const eur=n=>Number(n||0).toLocaleString('pt-PT',{style:'currency',currency:'EUR'});document.getElementById('rp-produtos').textContent=r.total_produtos;document.getElementById('rp-margem').textContent=Number(r.margem_media||0).toFixed(1)+'%';document.getElementById('rp-receita').textContent=eur(r.receita_stock_total);document.getElementById('rp-lucro').textContent=eur(r.lucro_stock_total);document.getElementById('rp-categorias').innerHTML='<tr><th>Categoria</th><th>Produtos</th><th>Margem média</th><th>Lucro potencial stock</th></tr>'+m.categorias.map(c=>`<tr><td>${c.categoria}</td><td>${c.produtos}</td><td>${Number(c.margem_media||0).toFixed(1)}%</td><td>${eur(c.lucro_stock)}</td></tr>`).join('');}catch(e){document.getElementById('rp-categorias').innerHTML='<tr><td colspan="4" style="color:#B14B33">Erro: '+e.message+'</td></tr>';}})();</script>
 
   </main>
 </div>

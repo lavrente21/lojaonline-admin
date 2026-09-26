@@ -61,8 +61,8 @@
     </div>
     <div class="campo-formulario"><label>ID / link no fornecedor</label><input type="text" id="pn-id-fornecedor" placeholder="ID/SKU real do fornecedor"></div>
     <div class="campo-formulario"><label>Preço de custo (€)</label><input type="number" step="0.01" id="pn-custo" value="0"></div>
-    <div class="campo-formulario"><label>Preço de venda (€)</label><input type="number" step="0.01" id="pn-venda" value="0"></div>
-    <div class="campo-formulario"><label>Stock inicial</label><input type="number" id="pn-stock" value="0"></div>
+    <div class="campo-formulario"><label>Preço de venda (€)</label><input type="number" step="0.01" id="pn-venda" value="0"></div><div class="campo-formulario"><label>Margem alvo (%)</label><input type="number" step="0.1" min="0" max="99.9" id="pn-margem" value="60"></div>
+    <div class="campo-formulario"><label>Stock inicial</label><input type="number" id="pn-stock" value="0"></div><div class="campo-formulario"><label>Lucro por unidade</label><output id="pn-lucro">€0,00</output></div>
   </div>
 </div>
 <p id="pn-erro" style="display:none;color:#B14B33;font-size:13.5px;margin-bottom:12px"></p>
@@ -87,7 +87,7 @@
       document.getElementById('pn-fornecedor').value = 'cj';
       document.getElementById('pn-id-fornecedor').value = p.idFornecedor || '';
       document.getElementById('pn-custo').value = p.precoCustoEUR || 0;
-      document.getElementById('pn-venda').value = p.precoVendaSugeridoEUR || 0;
+      document.getElementById('pn-venda').value = p.precoVendaSugeridoEUR || 0;document.getElementById('pn-margem').value = 60;
       document.getElementById('pn-stock').value = Number.isFinite(Number(p.stock)) ? Number(p.stock) : 0;
       document.getElementById('pn-cj-preco-usd').textContent = p.precoCustoUSD != null ? `Custo CJ: $${Number(p.precoCustoUSD).toFixed(2)} USD (conversão para EUR não é automática)` : ''; 
 
@@ -114,7 +114,9 @@
     }
   });
 
-  document.getElementById('pn-botao').addEventListener('click', async () => {
+  function atualizarNovo(){const c=Number(document.getElementById('pn-custo').value||0),v=Number(document.getElementById('pn-venda').value||0),m=Number(document.getElementById('pn-margem').value||0);document.getElementById('pn-lucro').textContent=(v-c).toLocaleString('pt-PT',{style:'currency',currency:'EUR'});if(document.activeElement.id==='pn-margem'&&c>0&&m<100)document.getElementById('pn-venda').value=(c/(1-m/100)).toFixed(2);}
+document.getElementById('pn-custo').oninput=atualizarNovo;document.getElementById('pn-venda').oninput=atualizarNovo;document.getElementById('pn-margem').oninput=atualizarNovo;
+document.getElementById('pn-botao').addEventListener('click', async () => {
     const erroEl = document.getElementById('pn-erro');
     const idFornecedorAtual = document.getElementById('pn-id-fornecedor').value.trim();
     const corpo = {
@@ -123,7 +125,7 @@
       fornecedor: document.getElementById('pn-fornecedor').value,
       idFornecedor: idFornecedorAtual,
       precoCustoEUR: parseFloat(document.getElementById('pn-custo').value) || 0,
-      precoVendaEUR: parseFloat(document.getElementById('pn-venda').value) || 0,
+      precoVendaEUR: parseFloat(document.getElementById('pn-venda').value) || 0,margemAlvoPct: parseFloat(document.getElementById('pn-margem').value) || 0,
       stock: parseInt(document.getElementById('pn-stock').value) || 0,
       descricao: document.getElementById('pn-descricao').value.trim()
     };

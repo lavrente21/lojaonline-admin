@@ -35,7 +35,7 @@
   <div class="cartao-stat"><div class="rotulo-stat">Total de pedidos</div><div class="valor-stat" id="db-total-pedidos">—</div></div>
   <div class="cartao-stat"><div class="rotulo-stat">Receita total (EUR)</div><div class="valor-stat" id="db-receita">—</div></div>
   <div class="cartao-stat"><div class="rotulo-stat">Pedidos pagos em AOA</div><div class="valor-stat" id="db-pedidos-aoa">—</div></div>
-  <div class="cartao-stat"><div class="rotulo-stat">Produtos no catálogo</div><div class="valor-stat" id="db-produtos">—</div></div>
+  <div class="cartao-stat"><div class="rotulo-stat">Produtos no catálogo</div><div class="valor-stat" id="db-produtos">—</div></div><div class="cartao-stat"><div class="rotulo-stat">Margem média</div><div class="valor-stat" id="db-margem">—</div></div><div class="cartao-stat"><div class="rotulo-stat">Lucro potencial stock</div><div class="valor-stat" id="db-lucro-stock">—</div></div>
 </div>
 <div class="painel-admin">
   <h2>Pedidos recentes</h2>
@@ -47,11 +47,11 @@
 <script>
   (async () => {
     try{
-      const [pedidos, produtos] = await Promise.all([apiFetch('/pedidos'), apiFetch('/produtos')]);
+      const [pedidos, produtos, metrics] = await Promise.all([apiFetch('/pedidos'), apiFetch('/produtos'), apiFetch('/produtos/admin/metrics')]);
       document.getElementById('db-total-pedidos').textContent = pedidos.length;
       document.getElementById('db-receita').textContent = pedidos.reduce((s,p)=>s+p.totalEUR,0).toFixed(2) + ' €';
       document.getElementById('db-pedidos-aoa').textContent = pedidos.filter(p=>p.moeda==='AOA').length;
-      document.getElementById('db-produtos').textContent = produtos.length;
+      document.getElementById('db-produtos').textContent = produtos.length;document.getElementById('db-margem').textContent=Number(metrics.resumo.margem_media||0).toFixed(1)+'%';document.getElementById('db-lucro-stock').textContent=Number(metrics.resumo.lucro_stock_total||0).toLocaleString('pt-PT',{style:'currency',currency:'EUR'});
 
       const tabela = document.getElementById('db-tabela-pedidos');
       const cabecalho = '<tr><th>Encomenda</th><th>Moeda</th><th>Rota</th><th>Estado</th><th>Total</th><th></th></tr>';
