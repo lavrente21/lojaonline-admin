@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="admin-body">
-<script src="js/api.js"></script>
+<script src="js/api.js"></script><script src="js/i18n-admin.js"></script>
 <script>exigirLoginAdmin();</script>
 <div class="admin-shell">
   <aside class="admin-sidebar">
@@ -49,9 +49,9 @@
     try{
       const [pedidos, produtos, metrics] = await Promise.all([apiFetch('/pedidos'), apiFetch('/produtos'), apiFetch('/produtos/admin/metrics')]);
       document.getElementById('db-total-pedidos').textContent = pedidos.length;
-      document.getElementById('db-receita').textContent = pedidos.reduce((s,p)=>s+p.totalEUR,0).toFixed(2) + ' €';
+      const receitaEUR = pedidos.reduce((s,p)=>s+p.totalEUR,0); document.getElementById('db-receita').dataset.adminEur=receitaEUR; document.getElementById('db-receita').textContent = window.LUMINA_ADMIN.money(receitaEUR);
       document.getElementById('db-pedidos-aoa').textContent = pedidos.filter(p=>p.moeda==='AOA').length;
-      document.getElementById('db-produtos').textContent = produtos.length;document.getElementById('db-margem').textContent=Number(metrics.resumo.margem_media||0).toFixed(1)+'%';document.getElementById('db-lucro-stock').textContent=Number(metrics.resumo.lucro_stock_total||0).toLocaleString('pt-PT',{style:'currency',currency:'EUR'});
+      document.getElementById('db-produtos').textContent = produtos.length;document.getElementById('db-margem').textContent=Number(metrics.resumo.margem_media||0).toFixed(1)+'%';const lucroStockEUR=Number(metrics.resumo.lucro_stock_total||0); document.getElementById('db-lucro-stock').dataset.adminEur=lucroStockEUR; document.getElementById('db-lucro-stock').textContent=window.LUMINA_ADMIN.money(lucroStockEUR);
 
       const tabela = document.getElementById('db-tabela-pedidos');
       const cabecalho = '<tr><th>Encomenda</th><th>Moeda</th><th>Rota</th><th>Estado</th><th>Total</th><th></th></tr>';
@@ -61,7 +61,7 @@
           <td>#${p.id}</td><td>${p.moeda}</td>
           <td>${p.rotaEnvio === 'agente_de_carga' ? 'Via agente' : 'Direto'}</td>
           <td><span class="badge-status">${p.estado}</span></td>
-          <td>${p.totalEUR.toFixed(2)} €</td>
+          <td data-admin-eur="${p.totalEUR}">${window.LUMINA_ADMIN.money(p.totalEUR)}</td>
           <td><a href="pedido-detalhe.html?numero=${p.id}" style="color:var(--terracota-escuro);font-size:13px">Ver</a></td>
         </tr>`).join('') : cabecalho + '<tr><td colspan="6" style="text-align:center;color:#8A7A70">Ainda não há pedidos.</td></tr>';
     }catch(e){
