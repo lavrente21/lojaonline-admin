@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pedido #LUM-48213 — Admin Lúmina</title>
+<title>Pedido — Admin Lúmina</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="admin-body">
@@ -27,12 +27,12 @@
 </aside>
   <main class="admin-main">
     <div class="admin-topo">
-      <h1>Pedido #LUM-48213</h1>
-      <div class="admin-usuario">👤 Ana (gestora) &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
+      <h1 id="pdd-titulo">Pedido</h1>
+      <div class="admin-usuario"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8" r="3.2"></circle><path d="M5.5 20c.7-3.5 2.9-5.4 6.5-5.4s5.8 1.9 6.5 5.4"></path></svg> <span class="admin-nome">Administrador</span> &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
     </div>
     
 <div class="painel-admin">
-  <h2 id="pdd-titulo">Encomenda</h2>
+  <h2>Encomenda</h2>
   <p style="font-size:13.5px;color:#5B4C43;margin-bottom:16px" id="pdd-info">A carregar...</p>
   <div id="pdd-itens"></div>
 </div>
@@ -43,84 +43,13 @@
 <p id="pdd-erro" style="display:none;color:#B14B33;font-size:13.5px"></p>
 <script>
   const numeroPedido = new URLSearchParams(window.location.search).get('numero');
-  const NOMES_FORNECEDOR = { cj: 'CJ Dropshipping', buckydrop: 'Buckydrop' };
-  const NOMES_ESTADO = {
-    novo: 'Aguarda pagamento', processando: 'Processando',
-    enviado_ao_agente: 'Enviado ao agente de carga', a_caminho: 'A caminho',
-    a_caminho_destino_final: 'A caminho do destino final', entregue: 'Entregue'
-  };
-
-  function linhaFornecedor(chave, dados, pedido){
-    return `
-      <div class="grade-form-admin" style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--linha)">
-        <div class="campo-formulario"><label>Fornecedor</label><input type="text" value="${NOMES_FORNECEDOR[chave] || chave}" disabled></div>
-        <div class="campo-formulario"><label>Nº de pedido no fornecedor</label><input type="text" value="${dados.idPedidoFornecedor || ''}" disabled></div>
-        <div class="campo-formulario"><label>Rastreio 1 (fornecedor → ${pedido.rotaEnvio === 'agente_de_carga' ? 'agente de carga' : 'cliente'})</label>
-          <input type="text" id="rastreio1-${chave}" value="${dados.rastreio1 || ''}" placeholder="colar código de rastreio"></div>
-        ${pedido.rotaEnvio === 'agente_de_carga' ? `
-        <div class="campo-formulario"><label>Rastreio 2 (agente → destino final)</label>
-          <input type="text" id="rastreio2-${chave}" value="${dados.rastreio2 || ''}" placeholder="colar código de rastreio"></div>` : ''}
-        <div class="campo-formulario"><label>Estado</label>
-          <select id="estado-${chave}">
-            ${['processando','enviado_ao_agente','a_caminho','a_caminho_destino_final','entregue'].map(v =>
-              `<option value="${v}" ${dados.estado===v?'selected':''}>${NOMES_ESTADO[v]}</option>`).join('')}
-          </select>
-        </div>
-      </div>
-      <button class="btn btn-secundario" onclick="guardarFornecedor('${chave}')">Guardar ${NOMES_FORNECEDOR[chave] || chave}</button>
-    `;
-  }
-
-  async function carregarPedido(){
-    try{
-      const pedido = await apiFetch('/pedidos/' + numeroPedido);
-      document.title = `Pedido #${pedido.id} — Admin Lúmina`;
-      document.getElementById('pdd-titulo').textContent = `Encomenda #${pedido.id}`;
-      document.getElementById('pdd-info').innerHTML =
-        `${pedido.moradaEntregaFinal.linha1}, ${pedido.moradaEntregaFinal.cidade} (${pedido.moradaEntregaFinal.pais}) ·
-         Moeda: ${pedido.moeda} · Rota: ${pedido.rotaEnvio === 'agente_de_carga' ? 'via agente de carga' : 'direta'} ·
-         Estado geral: <span class="badge-status">${NOMES_ESTADO[pedido.estado] || pedido.estado}</span>`;
-
-      document.getElementById('pdd-itens').innerHTML = pedido.itens.map(i =>
-        `<div class="linha-resumo"><span>${i.nome} ×${i.quantidade}</span><span>${(i.precoUnitarioEUR*i.quantidade).toFixed(2)} €</span></div>`
-      ).join('') + `<div class="linha-resumo total"><span>Total</span><span>${pedido.totalEUR.toFixed(2)} €${pedido.cambio ? ' ('+pedido.cambio.valorAOA.toLocaleString('pt-PT')+' AOA)' : ''}</span></div>`;
-
-      const chaves = Object.keys(pedido.fornecedores || {});
-      const container = document.getElementById('pdd-fornecedores');
-      if(chaves.length === 0){
-        container.innerHTML = '<p style="font-size:13.5px;color:#8A7A70">Ainda sem sub-pedido criado (aguarda confirmação de pagamento).</p>';
-      } else {
-        container.innerHTML = chaves.map(k => linhaFornecedor(k, pedido.fornecedores[k], pedido)).join('<br>');
-      }
-      window._pedidoAtual = pedido;
-    }catch(e){
-      document.getElementById('pdd-erro').textContent = 'Erro ao carregar pedido: ' + e.message;
-      document.getElementById('pdd-erro').style.display = 'block';
-    }
-  }
-
-  async function guardarFornecedor(chave){
-    const corpo = {
-      rastreio1: document.getElementById('rastreio1-' + chave).value.trim() || null,
-      estado: document.getElementById('estado-' + chave).value
-    };
-    const campoRastreio2 = document.getElementById('rastreio2-' + chave);
-    if(campoRastreio2) corpo.rastreio2 = campoRastreio2.value.trim() || null;
-    try{
-      await apiFetch(`/pedidos/${numeroPedido}/fornecedor/${chave}`, { method: 'PUT', body: JSON.stringify(corpo) });
-      alert('Atualizado com sucesso.');
-      carregarPedido();
-    }catch(e){
-      alert('Erro ao atualizar: ' + e.message);
-    }
-  }
-
-  if(!numeroPedido){
-    document.getElementById('pdd-erro').textContent = 'Nenhum pedido indicado na URL (falta ?numero=).';
-    document.getElementById('pdd-erro').style.display = 'block';
-  } else {
-    carregarPedido();
-  }
+  const NOMES_FORNECEDOR={cj:'CJ Dropshipping',buckydrop:'BuckyDrop'};
+  const NOMES_ESTADO={novo:'Aguarda pagamento',processando:'Processando',enviado_ao_agente:'Enviado ao agente de carga',a_caminho:'A caminho',a_caminho_destino_final:'A caminho do destino final',entregue:'Entregue',cancelado:'Cancelado'};
+  function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+  function linhaFornecedor(d,p){const chave=d.fornecedor;return `<div class="grade-form-admin" style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--linha)"><div class="campo-formulario"><label>Fornecedor</label><input value="${esc(NOMES_FORNECEDOR[chave]||chave)}" disabled></div><div class="campo-formulario"><label>Nº de pedido no fornecedor</label><input value="${esc(d.id_pedido_fornecedor||'')}" disabled></div><div class="campo-formulario"><label>Rastreio 1</label><input id="rastreio1-${chave}" value="${esc(d.rastreio1||'')}"></div>${p.rotaEnvio==='agente_de_carga'?`<div class="campo-formulario"><label>Rastreio 2</label><input id="rastreio2-${chave}" value="${esc(d.rastreio2||'')}"></div>`:''}<div class="campo-formulario"><label>Estado</label><select id="estado-${chave}">${['processando','enviado_ao_agente','a_caminho','a_caminho_destino_final','entregue'].map(v=>`<option value="${v}" ${d.estado===v?'selected':''}>${NOMES_ESTADO[v]}</option>`).join('')}</select></div></div><button class="btn btn-secundario" onclick="guardarFornecedor('${chave}')">Guardar</button>`}
+  async function carregarPedido(){try{const p=await apiFetch('/pedidos/'+encodeURIComponent(numeroPedido));document.title=`Pedido ${p.numeroPedido} — Admin Lúmina`;document.getElementById('pdd-titulo').textContent=`Encomenda ${p.numeroPedido}`;document.getElementById('pdd-info').innerHTML=`${esc(p.moradaEntrega.linha1)}, ${esc(p.moradaEntrega.cidade)} (${esc(p.moradaEntrega.pais)}) · Moeda: ${esc(p.moeda)} · Rota: ${p.rotaEnvio==='agente_de_carga'?'via agente de carga':'direta'} · Estado: <span class="badge-status">${esc(NOMES_ESTADO[p.estado]||p.estado)}</span>`;document.getElementById('pdd-itens').innerHTML=p.itens.map(i=>`<div class="linha-resumo"><span>${esc(i.nome_produto)} ×${i.quantidade}</span><span>${Number(i.preco_unitario_eur*i.quantidade).toFixed(2)} €</span></div>`).join('')+`<div class="linha-resumo total"><span>Total</span><span>${Number(p.totalEUR).toFixed(2)} €</span></div>`;const fs=p.fornecedores||[];document.getElementById('pdd-fornecedores').innerHTML=fs.length?fs.map(d=>linhaFornecedor(d,p)).join('<br>'):'<p style="font-size:13.5px;color:#8A7A70">Ainda sem sub-pedido criado.</p>';}catch(e){document.getElementById('pdd-erro').textContent='Erro ao carregar pedido: '+e.message;document.getElementById('pdd-erro').style.display='block'}}
+  async function guardarFornecedor(chave){const corpo={rastreio1:document.getElementById('rastreio1-'+chave)?.value.trim()||null,estado:document.getElementById('estado-'+chave)?.value};const r2=document.getElementById('rastreio2-'+chave);if(r2)corpo.rastreio2=r2.value.trim()||null;try{await apiFetch(`/pedidos/${encodeURIComponent(numeroPedido)}/fornecedor/${chave}`,{method:'PUT',body:JSON.stringify(corpo)});await carregarPedido()}catch(e){alert(e.message)}}
+  if(numeroPedido)carregarPedido();else{document.getElementById('pdd-erro').textContent='Nenhum pedido indicado na URL.';document.getElementById('pdd-erro').style.display='block'}
 </script>
 
   </main>

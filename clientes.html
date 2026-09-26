@@ -28,20 +28,18 @@
   <main class="admin-main">
     <div class="admin-topo">
       <h1>Clientes</h1>
-      <div class="admin-usuario">👤 Ana (gestora) &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
+      <div class="admin-usuario"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8" r="3.2"></circle><path d="M5.5 20c.7-3.5 2.9-5.4 6.5-5.4s5.8 1.9 6.5 5.4"></path></svg> <span class="admin-nome">Administrador</span> &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
     </div>
     
-<div class="linha-acoes-admin"><input type="text" placeholder="Procurar cliente..."></div>
+<div class="linha-acoes-admin"><input id="busca" type="text" placeholder="Procurar cliente..."></div>
 <div class="painel-admin" style="padding:0;overflow:hidden">
   <table class="tabela-simples">
     <tr><th>Cliente</th><th>E-mail</th><th>Encomendas</th><th>Total gasto</th></tr>
-    <tr><td>Marta Silva</td><td>marta@email.com</td><td>4</td><td>142,30 €</td></tr>
-    <tr><td>João Neves</td><td>joao@email.com</td><td>2</td><td>76,90 €</td></tr>
-    <tr><td>Inês Costa</td><td>ines@email.com</td><td>1</td><td>24,50 €</td></tr>
+    <tbody id="clientes-real"><tr><td colspan="4">A carregar...</td></tr></tbody>
   </table>
 </div>
 
-  </main>
+  <script>let clientes=[];document.addEventListener('DOMContentLoaded',async()=>{try{clientes=await apiFetch('/operacoes/admin/clientes');render()}catch(e){document.getElementById('clientes-real').innerHTML='<tr><td colspan="4">'+e.message+'</td></tr>'}});function render(){const q=(document.getElementById('busca').value||'').toLowerCase();const f=clientes.filter(c=>!q||[c.nome,c.email,c.telefone].some(x=>String(x||'').toLowerCase().includes(q)));document.getElementById('clientes-real').innerHTML=f.length?f.map(c=>'<tr><td>'+String(c.nome||'—')+'</td><td>'+c.email+'</td><td>'+c.encomendas+'</td><td>'+Number(c.total_eur||0).toLocaleString('pt-PT',{style:'currency',currency:'EUR'})+'</td></tr>').join(''):'<tr><td colspan="4">Nenhum cliente corresponde à pesquisa.</td></tr>'}document.getElementById('busca').oninput=render;</script></main>
 </div>
 </body>
 </html>

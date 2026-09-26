@@ -28,18 +28,15 @@
   <main class="admin-main">
     <div class="admin-topo">
       <h1>Atendimento</h1>
-      <div class="admin-usuario">👤 Ana (gestora) &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
+      <div class="admin-usuario"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8" r="3.2"></circle><path d="M5.5 20c.7-3.5 2.9-5.4 6.5-5.4s5.8 1.9 6.5 5.4"></path></svg> <span class="admin-nome">Administrador</span> &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
     </div>
     
 <div class="painel-admin">
   <h2>Mensagens de clientes</h2>
-  <div class="lista-conversas">
-    <div class="item-conversa"><span><strong>Cátia M.</strong> — Dúvida sobre tom de base</span><span class="tag-alerta">Por responder</span></div>
-    <div class="item-conversa"><span><strong>João N.</strong> — Estado da encomenda #LUM-48210</span><span class="tag-ok">Respondido</span></div>
-  </div>
+  <div class="lista-conversas" id="contactos-real"><div class="item-conversa">A carregar...</div></div>
 </div>
 
-  </main>
+  <script>document.addEventListener('DOMContentLoaded',load);async function load(){const el=document.getElementById('contactos-real');try{const rows=await apiFetch('/operacoes/admin/contactos');el.innerHTML=rows.length?rows.map(c=>'<div class="item-conversa"><span><strong>'+String(c.nome||c.email)+'</strong> — '+String(c.assunto||'Contacto')+'<br><small>'+String(c.mensagem||'')+'</small></span><span><select onchange="estadoContacto('+c.id+',this.value)"><option value="novo" '+(c.estado==='novo'?'selected':'')+'>novo</option><option value="em_analise" '+(c.estado==='em_analise'?'selected':'')+'>em análise</option><option value="respondido" '+(c.estado==='respondido'?'selected':'')+'>respondido</option><option value="fechado" '+(c.estado==='fechado'?'selected':'')+'>fechado</option></select></span></div>').join(''):'<div class="item-conversa">Ainda não existem contactos.</div>'}catch(e){el.innerHTML='<div class="item-conversa">'+e.message+'</div>'}}async function estadoContacto(id,estado){try{await apiFetch('/operacoes/admin/contactos/'+id,{method:'PUT',body:JSON.stringify({estado})})}catch(e){alert(e.message);load()}}</script></main>
 </div>
 </body>
 </html>

@@ -28,25 +28,25 @@
   <main class="admin-main">
     <div class="admin-topo">
       <h1>Envios</h1>
-      <div class="admin-usuario">👤 Ana (gestora) &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
+      <div class="admin-usuario"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8" r="3.2"></circle><path d="M5.5 20c.7-3.5 2.9-5.4 6.5-5.4s5.8 1.9 6.5 5.4"></path></svg> <span class="admin-nome">Administrador</span> &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
     </div>
     
 <div class="painel-admin">
   <h2>Regras de frete por região</h2>
   <table class="tabela-simples">
     <tr><th>Região</th><th>Prazo estimado</th><th>Custo</th></tr>
-    <tr><td>Portugal / Espanha</td><td>3-6 dias úteis</td><td>4,90 € (grátis acima de 45€)</td></tr>
-    <tr><td>Restante Europa</td><td>5-8 dias úteis</td><td>6,90 €</td></tr>
-    <tr><td>Estados Unidos</td><td>6-9 dias úteis</td><td>8,90 €</td></tr>
+    <tr><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td></tr>
   </table>
 </div>
 <div class="painel-admin">
   <h2>Fornecedores</h2>
-  <p style="font-size:14px;margin-bottom:8px">CJ Dropshipping — API conectada ✅</p>
-  <p style="font-size:14px">Buckydrop — API conectada ✅</p>
+  <p style="font-size:14px;margin-bottom:8px">CJ Dropshipping — API conectada <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m8 12 2.6 2.7L16.5 9"></path></svg></p>
+  <p style="font-size:14px">Buckydrop — API conectada <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m8 12 2.6 2.7L16.5 9"></path></svg></p>
 </div>
 
-  </main>
+  <script>document.getElementById('sync-track').onclick=async()=>{const m=document.getElementById('sync-msg');try{const r=await apiFetch('/admin-operacoes/sincronizar-tracking',{method:'POST'});m.textContent=`Tracking: ${r.resultados.filter(x=>x.ok).length} atualizados.`}catch(e){m.textContent=e.message}};document.getElementById('sync-stock').onclick=async()=>{const m=document.getElementById('sync-msg');try{const r=await apiFetch('/admin-operacoes/sincronizar-stock',{method:'POST'});m.textContent=`Stock: ${r.resultados.filter(x=>x.ok).length} sincronizados.`}catch(e){m.textContent=e.message}}</script></main>
 </div>
 </body>
 </html>

@@ -8,7 +8,9 @@
 </head>
 <body class="admin-body">
 <script src="js/api.js"></script><script src="js/i18n-admin.js"></script>
-<script>exigirLoginAdmin();</script>
+<script>function normalizarEtiquetaAdmin(v){return String(v||'').split(/[,\s]+/).map(x=>x.trim()).filter(Boolean).map(x=>x.startsWith('#')?x:'#'+x.replace(/^#+/,'' )).join(' ')}
+async function carregarCategoriasAdmin(sel){try{const cs=await apiFetch('/operacoes/admin/categorias');sel.innerHTML=cs.map(c=>`<option value=\"${String(c.nome).replace(/\"/g,'&quot;')}\">${String(c.nome).replace(/[&<>]/g,'')}</option>`).join('')}catch(e){console.warn(e.message)}}
+exigirLoginAdmin();</script>
 <div class="admin-shell">
   <aside class="admin-sidebar">
   <span class="admin-logo">Lúmina · Admin</span>
@@ -47,9 +49,7 @@
   <h2>Informação geral</h2>
   <div class="grade-form-admin">
     <div class="campo-formulario"><label>Nome do produto</label><input type="text" id="pn-nome"></div>
-    <div class="campo-formulario"><label>Categoria</label>
-      <select id="pn-categoria"><option>Skincare</option><option>Hair care</option><option>Body care</option><option>Maquilhagem</option></select>
-    </div>
+    <div class="campo-formulario"><label>Categoria</label><select id="pn-categoria"></select></div><div class="campo-formulario"><label>Estado do catálogo</label><select id="pn-estado"><option value="normal">Normal</option><option value="destaque">Destaque</option><option value="inativo">Rascunho / inativo</option></select></div><div class="campo-formulario"><label>Tags</label><input id="pn-etiqueta" maxlength="60" placeholder="#novo #bestseller #skincare"></div>
     <div class="campo-formulario" style="grid-column:1/-1"><label>Descrição (uso interno, ainda não exibida na loja)</label><textarea rows="3" id="pn-descricao"></textarea></div>
   </div>
 </div>
@@ -72,7 +72,8 @@
   // para irem juntos quando o produto for de facto criado.
   let ultimoProdutoCJ = null;
 
-  document.getElementById('pn-cj-buscar').addEventListener('click', async () => {
+  carregarCategoriasAdmin(document.getElementById('pn-categoria'));
+document.getElementById('pn-cj-buscar').addEventListener('click', async () => {
     const estadoEl = document.getElementById('pn-cj-estado');
     const idOuLink = document.getElementById('pn-cj-id').value.trim();
     if(!idOuLink){ estadoEl.style.color = '#B14B33'; estadoEl.textContent = 'Indica o ID ou o link do produto.'; return; }
@@ -127,7 +128,10 @@ document.getElementById('pn-botao').addEventListener('click', async () => {
       precoCustoEUR: parseFloat(document.getElementById('pn-custo').value) || 0,
       precoVendaEUR: parseFloat(document.getElementById('pn-venda').value) || 0,margemAlvoPct: parseFloat(document.getElementById('pn-margem').value) || 0,
       stock: parseInt(document.getElementById('pn-stock').value) || 0,
-      descricao: document.getElementById('pn-descricao').value.trim()
+      descricao: document.getElementById('pn-descricao').value.trim(),
+      etiqueta: normalizarEtiquetaAdmin(document.getElementById('pn-etiqueta').value),
+      ativo: document.getElementById('pn-estado').value !== 'inativo',
+      destaque: document.getElementById('pn-estado').value === 'destaque'
     };
     // Só inclui os dados extra da CJ (imagens/sku) se ainda corresponderem
     // ao produto que está atualmente no formulário.

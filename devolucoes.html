@@ -28,17 +28,12 @@
   <main class="admin-main">
     <div class="admin-topo">
       <h1>Devoluções</h1>
-      <div class="admin-usuario">👤 Ana (gestora) &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
+      <div class="admin-usuario"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8" r="3.2"></circle><path d="M5.5 20c.7-3.5 2.9-5.4 6.5-5.4s5.8 1.9 6.5 5.4"></path></svg> <span class="admin-nome">Administrador</span> &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
     </div>
     
-<div class="painel-admin" style="padding:0;overflow:hidden">
-  <table class="tabela-simples">
-    <tr><th>Encomenda</th><th>Cliente</th><th>Motivo</th><th>Estado</th><th></th></tr>
-    <tr><td>#LUM-47950</td><td>João Neves</td><td>Produto danificado</td><td><span class="badge-status">Em análise</span></td><td><a href="#" style="color:var(--terracota-escuro);font-size:13px">Aprovar</a> · <a href="#" style="color:var(--terracota-escuro);font-size:13px">Rejeitar</a></td></tr>
-  </table>
-</div>
+<div class="painel-admin" style="padding:0;overflow:hidden"><table class="tabela-simples"><tr><th>Encomenda</th><th>Cliente</th><th>Motivo</th><th>Estado</th><th>Ação</th></tr><tbody id="devolucoes-real"><tr><td colspan="5">A carregar...</td></tr></tbody></table></div>
 
-  </main>
+  <script>document.addEventListener('DOMContentLoaded',async()=>{const el=document.getElementById('devolucoes-real');try{const rows=await apiFetch('/operacoes/admin/devolucoes');el.innerHTML=rows.length?rows.map(d=>`<tr><td>${d.numero}</td><td>${d.cliente_nome||d.cliente_email||'—'}</td><td>${d.motivo}</td><td>${d.estado}</td><td><select onchange="mudarDev(${d.id},this.value)"><option>${d.estado}</option><option>em_analise</option><option>aprovada</option><option>rejeitada</option><option>recebida</option><option>reembolsada</option><option>cancelada</option></select></td></tr>`).join(''):'<tr><td colspan="5">Ainda não existem solicitações.</td></tr>'}catch(e){el.innerHTML=`<tr><td colspan="5">${e.message}</td></tr>`}});async function mudarDev(id,estado){try{await apiFetch('/operacoes/admin/devolucoes/'+id,{method:'PUT',body:JSON.stringify({estado})})}catch(e){alert(e.message)}}</script></main>
 </div>
 </body>
 </html>

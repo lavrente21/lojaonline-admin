@@ -28,23 +28,23 @@
   <main class="admin-main">
     <div class="admin-topo">
       <h1>Newsletter</h1>
-      <div class="admin-usuario">👤 Ana (gestora) &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
+      <div class="admin-usuario"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8" r="3.2"></circle><path d="M5.5 20c.7-3.5 2.9-5.4 6.5-5.4s5.8 1.9 6.5 5.4"></path></svg> <span class="admin-nome">Administrador</span> &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
     </div>
     
 <div class="grade-stats" style="grid-template-columns:repeat(3,1fr)">
-  <div class="cartao-stat"><div class="rotulo-stat">Subscritores</div><div class="valor-stat">1.842</div></div>
-  <div class="cartao-stat"><div class="rotulo-stat">Taxa de abertura</div><div class="valor-stat">38%</div></div>
-  <div class="cartao-stat"><div class="rotulo-stat">Cliques</div><div class="valor-stat">9%</div></div>
+  <div class="cartao-stat"><div class="rotulo-stat">Subscritores</div><div class="valor-stat">—</div></div>
+  <div class="cartao-stat"><div class="rotulo-stat">Registos totais</div><div class="valor-stat">—</div></div>
+  <div class="cartao-stat"><div class="rotulo-stat">Cliques</div><div class="valor-stat">—</div></div>
 </div>
 <div class="painel-admin">
   <h2>Últimos envios</h2>
   <table class="tabela-simples">
     <tr><th>Campanha</th><th>Data</th><th>Aberturas</th></tr>
-    <tr><td>Newsletter — Novidades de setembro</td><td>01/09/2026</td><td>612</td></tr>
+    <tbody id="campaigns"><tr><td colspan="3">A carregar...</td></tr></tbody>
   </table>
 </div>
 
-  </main>
+  <script>document.addEventListener('DOMContentLoaded',async()=>{try{const d=await apiFetch('/operacoes/admin/newsletter');const vals=document.querySelectorAll('.cartao-stat .valor-stat');if(vals[0])vals[0].textContent=d.total;if(vals[1])vals[1].textContent=d.totalRegistos;const c=document.getElementById('campaigns');c.innerHTML=d.campanhas.length?d.campanhas.map(x=>'<tr><td>'+x.assunto+'</td><td>'+(x.enviado_em?new Date(x.enviado_em).toLocaleDateString('pt-PT'):'—')+'</td><td>'+x.abertos+'</td></tr>').join(''):'<tr><td colspan="3">Não existem campanhas reais.</td></tr>'}catch(e){document.getElementById('campaigns').innerHTML='<tr><td colspan="3">'+e.message+'</td></tr>'}})</script></main>
 </div>
 </body>
 </html>

@@ -28,18 +28,12 @@
   <main class="admin-main">
     <div class="admin-topo">
       <h1>Avaliações</h1>
-      <div class="admin-usuario">👤 Ana (gestora) &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
+      <div class="admin-usuario"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8" r="3.2"></circle><path d="M5.5 20c.7-3.5 2.9-5.4 6.5-5.4s5.8 1.9 6.5 5.4"></path></svg> <span class="admin-nome">Administrador</span> &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
     </div>
     
-<div class="painel-admin" style="padding:0;overflow:hidden">
-  <table class="tabela-simples">
-    <tr><th>Produto</th><th>Cliente</th><th>Nota</th><th>Comentário</th><th></th></tr>
-    <tr><td>Sérum de vitamina C</td><td>Rita A.</td><td>★★★★★</td><td>Já é o terceiro frasco que compro...</td><td><span class="tag-ok">Aprovado</span></td></tr>
-    <tr><td>Base fluida</td><td>Cátia M.</td><td>★★☆☆☆</td><td>Tom não corresponde à imagem</td><td><a href="#" style="color:var(--terracota-escuro);font-size:13px">Rever</a></td></tr>
-  </table>
-</div>
+<div class="painel-admin" style="padding:0;overflow:hidden"><table class="tabela-simples"><thead><tr><th>Produto</th><th>Cliente</th><th>Nota</th><th>Comentário</th><th>Ação</th></tr></thead><tbody id="reviews-real"><tr><td colspan="5">A carregar...</td></tr></tbody></table></div>
 
-  </main>
+  <script>document.addEventListener('DOMContentLoaded',async()=>{const el=document.getElementById('reviews-real');try{const rows=await apiFetch('/operacoes/admin/avaliacoes');el.innerHTML=rows.length?rows.map(a=>`<tr><td>${a.produto_nome}</td><td>${a.nome_autor}</td><td>${Array.from({length:5},(_,i)=>`<svg viewBox="0 0 24 24" width="15" height="15" fill="${i<a.estrelas?'currentColor':'none'}" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"></path></svg>`).join('')}</td><td>${a.comentario||''}</td><td><button onclick="moderar(${a.id},${!a.aprovado})">${a.aprovado?'Rejeitar':'Aprovar'}</button></td></tr>`).join(''):'<tr><td colspan="5">Ainda não existem avaliações.</td></tr>'}catch(e){el.innerHTML=`<tr><td colspan="5">${e.message}</td></tr>`}});async function moderar(id,aprovado){try{await apiFetch('/operacoes/admin/avaliacoes/'+id,{method:'PUT',body:JSON.stringify({aprovado})});location.reload()}catch(e){alert(e.message)}}</script></main>
 </div>
 </body>
 </html>
