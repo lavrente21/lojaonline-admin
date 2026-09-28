@@ -32,21 +32,45 @@
     </div>
     
 <div class="painel-admin">
-  <h2>Regras de frete por região</h2>
-  <table class="tabela-simples">
-    <tr><th>Região</th><th>Prazo estimado</th><th>Custo</th></tr>
-    <tr><td></td><td></td><td></td></tr>
-    <tr><td></td><td></td><td></td></tr>
-    <tr><td></td><td></td><td></td></tr>
-  </table>
+  <h2>Rotas de envio</h2>
+  <p style="font-size:14px;margin-bottom:8px" id="env-diretos">A carregar…</p>
+  <p style="font-size:14px" id="env-agente">A carregar…</p>
+  <p style="font-size:13px;color:#777;margin-top:8px">Países fora da lista direta (incluindo Angola) só ficam ativos quando o agente de carga estiver configurado.</p>
 </div>
 <div class="painel-admin">
   <h2>Fornecedores</h2>
-  <p style="font-size:14px;margin-bottom:8px">CJ Dropshipping — API conectada <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m8 12 2.6 2.7L16.5 9"></path></svg></p>
-  <p style="font-size:14px">Buckydrop — API conectada <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m8 12 2.6 2.7L16.5 9"></path></svg></p>
+  <p style="font-size:14px;margin-bottom:8px" id="env-cj">CJ Dropshipping — a verificar…</p>
+  <p style="font-size:14px;margin-bottom:12px" id="env-bucky">BuckyDrop — a verificar…</p>
+  <button class="btn btn-secundario" id="sync-stock">Sincronizar catálogo/stock CJ</button>
+  <button class="btn btn-secundario" id="sync-track">Sincronizar rastreio</button>
+  <p id="sync-msg" style="font-size:13.5px;margin-top:10px"></p>
 </div>
-
-  <script>document.getElementById('sync-track').onclick=async()=>{const m=document.getElementById('sync-msg');try{const r=await apiFetch('/admin-operacoes/sincronizar-tracking',{method:'POST'});m.textContent=`Tracking: ${r.resultados.filter(x=>x.ok).length} atualizados.`}catch(e){m.textContent=e.message}};document.getElementById('sync-stock').onclick=async()=>{const m=document.getElementById('sync-msg');try{const r=await apiFetch('/admin-operacoes/sincronizar-stock',{method:'POST'});m.textContent=`Stock: ${r.resultados.filter(x=>x.ok).length} sincronizados.`}catch(e){m.textContent=e.message}}</script></main>
+<div class="painel-admin">
+  <h2>Envios por fornecedor</h2>
+  <table class="tabela-simples">
+    <thead><tr><th>Encomenda</th><th>Fornecedor</th><th>Rastreio</th><th>Estado</th></tr></thead>
+    <tbody id="env-lista"><tr><td colspan="4">A carregar…</td></tr></tbody>
+  </table>
+</div>
+<script>
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+document.addEventListener('DOMContentLoaded',async()=>{
+  try{const s=await apiFetch('/operacoes/admin/status');
+    document.getElementById('env-diretos').textContent='Envio direto: '+s.paisesDiretos.join(', ');
+    document.getElementById('env-agente').textContent='Agente de carga: '+(s.agenteDeCarga?'configurado':'não configurado (Angola desligada)');
+    document.getElementById('env-cj').textContent='CJ Dropshipping — '+(s.cj?'API configurada':'não configurada');
+    document.getElementById('env-bucky').textContent='BuckyDrop — '+(s.buckydrop?'API configurada':'não configurada');
+  }catch(e){}
+  try{const ps=await apiFetch('/pedidos');const rows=[];
+    ps.forEach(p=>(p.fornecedores||[]).forEach(f=>rows.push(`<tr><td><a href="pedido-detalhe.html?numero=${encodeURIComponent(p.numeroPedido)}">${esc(p.numeroPedido)}</a></td><td>${esc(f.fornecedor)}</td><td>${esc(f.rastreio1||'—')}</td><td>${esc(f.estado)}</td></tr>`)));
+    document.getElementById('env-lista').innerHTML=rows.join('')||'<tr><td colspan="4">Ainda não há envios a fornecedores.</td></tr>';
+  }catch(e){document.getElementById('env-lista').innerHTML=`<tr><td colspan="4">${esc(e.message)}</td></tr>`}
+  const m=document.getElementById('sync-msg');
+  document.getElementById('sync-stock').onclick=async()=>{m.textContent='A sincronizar…';try{await apiFetch('/produtos/admin/sincronizar-catalogo',{method:'POST'});m.textContent='Catálogo sincronizado.'}catch(e){m.textContent=e.message}};
+  document.getElementById('sync-track').onclick=async()=>{m.textContent='A sincronizar…';try{const r=await apiFetch('/operacoes/admin/sincronizar-tracking',{method:'POST'});m.textContent=`Rastreio: ${r.resultados.filter(x=>x.ok).length} de ${r.total} atualizados.`}catch(e){m.textContent=e.message}};
+});
+</script>
+  </main>
 </div>
 </body>
 </html>

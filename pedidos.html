@@ -53,13 +53,13 @@
       }
       tabela.innerHTML = cabecalho + pedidos.slice().reverse().map(p => `
         <tr>
-          <td>#${p.id}</td>
+          <td>#${p.numeroPedido}</td>
           <td>${new Date(p.criadoEm).toLocaleDateString('pt-PT')}</td>
           <td>${p.moeda}</td>
           <td>${p.rotaEnvio === 'agente_de_carga' ? 'Via agente' : 'Direto'}</td>
           <td><span class="badge-status">${p.estado}</span></td>
           <td>${p.totalEUR.toFixed(2)} €</td>
-          <td><a href="pedido-detalhe.html?numero=${p.id}" style="color:var(--terracota-escuro);font-size:13px">Ver</a></td>
+          <td><a href="pedido-detalhe.html?numero=${encodeURIComponent(p.numeroPedido)}" style="color:var(--terracota-escuro);font-size:13px">Ver</a></td>
         </tr>`).join('');
     }catch(e){
       tabela.innerHTML = `<tr><td colspan="7" style="color:#B14B33">Erro ao carregar: ${e.message}</td></tr>`;

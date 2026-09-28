@@ -37,21 +37,44 @@
   <div class="cartao-stat"><div class="rotulo-stat">Pendente</div><div class="valor-stat">—</div></div>
 </div>
 <div class="painel-admin">
-  <h2>Métodos de pagamento ligados</h2>
-  <p style="font-size:14px;margin-bottom:8px"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m8 12 2.6 2.7L16.5 9"></path></svg> Stripe — conectado</p>
-  <p style="font-size:14px;margin-bottom:8px">Stripe — por configurar</p>
-  <p style="font-size:14px">AppyPay — por configurar</p>
+  <h2>Métodos de pagamento</h2>
+  <p id="gw-stripe" style="font-size:14px;margin-bottom:8px">Stripe (EUR/USD) — a verificar…</p>
+  <p id="gw-appypay" style="font-size:14px;margin-bottom:8px">AppyPay (AOA) — a verificar…</p>
+  <p style="font-size:13px;color:#777">Enquanto o gateway estiver desligado, os pedidos ficam com pagamento <b>manual/pendente</b>. Confirme o recebimento abaixo em "Marcar como pago" e o pedido segue para processamento.</p>
 </div>
 <div class="painel-admin">
-  <h2>Transações recentes</h2>
+  <h2>Transações</h2>
   <table class="tabela-simples">
-    <tr><th>Encomenda</th><th>Método</th><th>Valor</th><th>Estado</th></tr>
-    <tr><td></td><td>Cartão (Stripe)</td><td>—</td><td><span class="tag-ok">Pago</span></td></tr>
-    
+    <thead><tr><th>Encomenda</th><th>Método</th><th>Valor</th><th>Estado</th><th>Ação</th></tr></thead>
+    <tbody id="payments-real"><tr><td colspan="5">A carregar…</td></tr></tbody>
   </table>
 </div>
-
-  <script>document.addEventListener('DOMContentLoaded',async()=>{try{const d=await apiFetch('/operacoes/admin/pagamentos');const f=v=>Number(v||0).toLocaleString('pt-PT',{style:'currency',currency:'EUR'});const vals=document.querySelectorAll('.cartao-stat .valor-stat');if(vals[0])vals[0].textContent=f(d.stats.recebido_eur);if(vals[1])vals[1].textContent=f(d.stats.reembolsado_eur);if(vals[2])vals[2].textContent=f(d.stats.pendente_eur);const el=document.getElementById('payments-real');el.innerHTML=d.pedidos.length?d.pedidos.map(p=>`<tr><td>${p.numero}</td><td>${p.metodo}</td><td>${f(p.total_eur)}</td><td>${p.estado}</td></tr>`).join(''):'<tr><td colspan="4">Ainda não existem pagamentos.</td></tr>'}catch(e){const el=document.getElementById('payments-real');if(el)el.innerHTML=`<tr><td colspan="4">${e.message}</td></tr>`}})</script></main>
+  <script>
+const fEUR=v=>Number(v||0).toLocaleString('pt-PT',{style:'currency',currency:'EUR'});
+async function carregarPagamentos(){
+  const el=document.getElementById('payments-real');
+  try{
+    const d=await apiFetch('/operacoes/admin/pagamentos');
+    const vals=document.querySelectorAll('.cartao-stat .valor-stat');
+    if(vals[0])vals[0].textContent=fEUR(d.stats.recebido_eur);
+    if(vals[1])vals[1].textContent=fEUR(d.stats.reembolsado_eur);
+    if(vals[2])vals[2].textContent=fEUR(d.stats.pendente_eur);
+    el.innerHTML=d.pedidos.length?d.pedidos.map(p=>`<tr><td><a href="pedido-detalhe.html?numero=${encodeURIComponent(p.numero)}">${p.numero}</a></td><td>${p.metodo==='manual'?'Manual':p.metodo}</td><td>${fEUR(p.total_eur)}</td><td>${p.estado}</td><td>${p.estado==='pendente'?`<button class="btn btn-secundario" onclick="marcarPago('${p.numero}')">Marcar como pago</button>`:''}</td></tr>`).join(''):'<tr><td colspan="5">Ainda não existem pagamentos.</td></tr>';
+  }catch(e){el.innerHTML=`<tr><td colspan="5">${e.message}</td></tr>`}
+}
+async function marcarPago(numero){
+  const nota=prompt('Referência do pagamento (opcional, ex: transferência BFA):','');
+  if(nota===null)return;
+  try{await apiFetch('/operacoes/admin/pagamentos/'+encodeURIComponent(numero)+'/marcar-pago',{method:'PUT',body:JSON.stringify({nota})});carregarPagamentos()}catch(e){alert(e.message)}
+}
+document.addEventListener('DOMContentLoaded',async()=>{
+  carregarPagamentos();
+  try{const s=await apiFetch('/operacoes/admin/status');
+    document.getElementById('gw-stripe').textContent='Stripe (EUR/USD) — '+(s.stripe?'ligado':'desligado (pagamento manual)');
+    document.getElementById('gw-appypay').textContent='AppyPay (AOA) — '+(s.appypay?'ligado':'desligado (pagamento manual)');
+  }catch(e){}
+});
+</script></main>
 </div>
 </body>
 </html>
