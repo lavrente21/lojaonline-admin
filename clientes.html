@@ -7,8 +7,9 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="admin-body">
+<script src="/js/config.js"></script>
 <script src="js/api.js"></script><script src="js/i18n-admin.js"></script>
-<script>exigirLoginAdmin();</script>
+<script src="js/extracted/clientes-0-8798a1cb58d5.js"></script>
 <div class="admin-shell">
   <aside class="admin-sidebar">
   <span class="admin-logo">Lúmina · Admin</span>
@@ -39,7 +40,7 @@
   </table>
 </div>
 
-  <script>let clientes=[];document.addEventListener('DOMContentLoaded',async()=>{try{clientes=await apiFetch('/operacoes/admin/clientes');render()}catch(e){document.getElementById('clientes-real').innerHTML='<tr><td colspan="4">'+e.message+'</td></tr>'}});function render(){const q=(document.getElementById('busca').value||'').toLowerCase();const f=clientes.filter(c=>!q||[c.nome,c.email,c.telefone].some(x=>String(x||'').toLowerCase().includes(q)));document.getElementById('clientes-real').innerHTML=f.length?f.map(c=>'<tr><td>'+String(c.nome||'—')+'</td><td>'+c.email+'</td><td>'+c.encomendas+'</td><td>'+Number(c.total_eur||0).toLocaleString('pt-PT',{style:'currency',currency:'EUR'})+'</td></tr>').join(''):'<tr><td colspan="4">Nenhum cliente corresponde à pesquisa.</td></tr>'}document.getElementById('busca').oninput=render;</script></main>
+  <script src="js/extracted/clientes-1-42116587a871.js"></script></main>
 </div>
 </body>
 </html>

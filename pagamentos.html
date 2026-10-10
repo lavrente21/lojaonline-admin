@@ -7,8 +7,9 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="admin-body">
+<script src="/js/config.js"></script>
 <script src="js/api.js"></script><script src="js/i18n-admin.js"></script>
-<script>exigirLoginAdmin();</script>
+<script src="js/extracted/pagamentos-0-be418dc850bb.js"></script><script src="js/extracted/pagamentos-1-7f3f78c71555.js"></script>
 <div class="admin-shell">
   <aside class="admin-sidebar">
   <span class="admin-logo">Lúmina · Admin</span>
@@ -38,9 +39,9 @@
 </div>
 <div class="painel-admin">
   <h2>Métodos de pagamento</h2>
-  <p id="gw-stripe" style="font-size:14px;margin-bottom:8px">Stripe (EUR/USD) — a verificar…</p>
-  <p id="gw-appypay" style="font-size:14px;margin-bottom:8px">AppyPay (AOA) — a verificar…</p>
-  <p style="font-size:13px;color:#777">Enquanto o gateway estiver desligado, os pedidos ficam com pagamento <b>manual/pendente</b>. Confirme o recebimento abaixo em "Marcar como pago" e o pedido segue para processamento.</p>
+  <p id="gw-stripe" style="font-size:14px;margin-bottom:8px">Stripe (fora desta fase) (EUR/USD) — a verificar…</p>
+  <p id="gw-appypay" style="font-size:14px;margin-bottom:8px">AppyPay (fora desta fase) (AOA) — a verificar…</p>
+  <p style="font-size:13px;color:#777">Pagamentos manuais: transferência, depósito ou Multicaixa só aparecem quando configurados no Render. Confirmação e reembolsos ficam sujeitos a permissões e auditoria. O registo do reembolso não executa a transferência ao cliente.</p>
 </div>
 <div class="painel-admin">
   <h2>Transações</h2>
@@ -49,32 +50,7 @@
     <tbody id="payments-real"><tr><td colspan="5">A carregar…</td></tr></tbody>
   </table>
 </div>
-  <script>
-const fEUR=v=>Number(v||0).toLocaleString('pt-PT',{style:'currency',currency:'EUR'});
-async function carregarPagamentos(){
-  const el=document.getElementById('payments-real');
-  try{
-    const d=await apiFetch('/operacoes/admin/pagamentos');
-    const vals=document.querySelectorAll('.cartao-stat .valor-stat');
-    if(vals[0])vals[0].textContent=fEUR(d.stats.recebido_eur);
-    if(vals[1])vals[1].textContent=fEUR(d.stats.reembolsado_eur);
-    if(vals[2])vals[2].textContent=fEUR(d.stats.pendente_eur);
-    el.innerHTML=d.pedidos.length?d.pedidos.map(p=>`<tr><td><a href="pedido-detalhe.html?numero=${encodeURIComponent(p.numero)}">${p.numero}</a></td><td>${p.metodo==='manual'?'Manual':p.metodo}</td><td>${fEUR(p.total_eur)}</td><td>${p.estado}</td><td>${p.estado==='pendente'?`<button class="btn btn-secundario" onclick="marcarPago('${p.numero}')">Marcar como pago</button>`:''}</td></tr>`).join(''):'<tr><td colspan="5">Ainda não existem pagamentos.</td></tr>';
-  }catch(e){el.innerHTML=`<tr><td colspan="5">${e.message}</td></tr>`}
-}
-async function marcarPago(numero){
-  const nota=prompt('Referência do pagamento (opcional, ex: transferência BFA):','');
-  if(nota===null)return;
-  try{await apiFetch('/operacoes/admin/pagamentos/'+encodeURIComponent(numero)+'/marcar-pago',{method:'PUT',body:JSON.stringify({nota})});carregarPagamentos()}catch(e){alert(e.message)}
-}
-document.addEventListener('DOMContentLoaded',async()=>{
-  carregarPagamentos();
-  try{const s=await apiFetch('/operacoes/admin/status');
-    document.getElementById('gw-stripe').textContent='Stripe (EUR/USD) — '+(s.stripe?'ligado':'desligado (pagamento manual)');
-    document.getElementById('gw-appypay').textContent='AppyPay (AOA) — '+(s.appypay?'ligado':'desligado (pagamento manual)');
-  }catch(e){}
-});
-</script></main>
+  <script src="js/extracted/pagamentos-2-75fff619f263.js"></script></main>
 </div>
 </body>
 </html>

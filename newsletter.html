@@ -7,8 +7,9 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="admin-body">
+<script src="/js/config.js"></script>
 <script src="js/api.js"></script><script src="js/i18n-admin.js"></script>
-<script>exigirLoginAdmin();</script>
+<script src="js/extracted/newsletter-0-26b03b6f0105.js"></script>
 <div class="admin-shell">
   <aside class="admin-sidebar">
   <span class="admin-logo">Lúmina · Admin</span>
@@ -37,6 +38,15 @@
   <div class="cartao-stat"><div class="rotulo-stat">Cliques</div><div class="valor-stat">—</div></div>
 </div>
 <div class="painel-admin">
+  <h2>Nova campanha</h2>
+  <form id="campaign-form" class="formulario-admin">
+    <div class="campo-formulario"><label for="campaign-subject">Assunto</label><input id="campaign-subject" maxlength="180" required></div>
+    <div class="campo-formulario"><label for="campaign-content">Mensagem</label><textarea id="campaign-content" rows="7" required></textarea></div>
+    <p id="campaign-msg" role="status" aria-live="polite"></p>
+    <button class="btn btn-primario" type="submit">Guardar rascunho</button>
+  </form>
+</div>
+<div class="painel-admin">
   <h2>Últimos envios</h2>
   <table class="tabela-simples">
     <tr><th>Campanha</th><th>Data</th><th>Aberturas</th></tr>
@@ -44,7 +54,7 @@
   </table>
 </div>
 
-  <script>document.addEventListener('DOMContentLoaded',async()=>{try{const d=await apiFetch('/operacoes/admin/newsletter');const vals=document.querySelectorAll('.cartao-stat .valor-stat');if(vals[0])vals[0].textContent=d.total;if(vals[1])vals[1].textContent=d.totalRegistos;const c=document.getElementById('campaigns');c.innerHTML=d.campanhas.length?d.campanhas.map(x=>'<tr><td>'+x.assunto+'</td><td>'+(x.enviado_em?new Date(x.enviado_em).toLocaleDateString('pt-PT'):'—')+'</td><td>'+x.abertos+'</td></tr>').join(''):'<tr><td colspan="3">Não existem campanhas reais.</td></tr>'}catch(e){document.getElementById('campaigns').innerHTML='<tr><td colspan="3">'+e.message+'</td></tr>'}})</script></main>
+  <script src="js/extracted/newsletter-1-4ad50f831ac3.js"></script></main>
 </div>
 </body>
 </html>

@@ -7,8 +7,9 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="admin-body">
+<script src="/js/config.js"></script>
 <script src="js/api.js"></script><script src="js/i18n-admin.js"></script>
-<script>exigirLoginAdmin();</script>
+<script src="js/extracted/produtos-0-c32c310ae797.js"></script>
 <div class="admin-shell">
   <aside class="admin-sidebar">
   <span class="admin-logo">Lúmina · Admin</span>
@@ -38,14 +39,7 @@
     <tr><td colspan="7" style="text-align:center;color:#8A7A70">A carregar...</td></tr>
   </table>
 </div>
-<script>
-const NOMES_FORNECEDOR={cj:'CJ Dropshipping',buckydrop:'Buckydrop',proprio:'Próprio'};let produtos=[];const eur=n=>Number(n||0).toLocaleString('pt-PT',{style:'currency',currency:'EUR'});
-function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-function render(){const q=(document.getElementById('pr-busca').value||'').toLowerCase();const f=document.getElementById('pr-filtro-margem').value;const estado=document.getElementById('pr-filtro-estado').value;const lista=produtos.filter(p=>{const ok=!q||[p.nome,p.skuFornecedor,p.fornecedor,p.etiqueta,p.categoria].some(x=>String(x||'').toLowerCase().includes(q));const m=Number(p.margemPct||0);const mf=!f||(f==='low'&&m<40)||(f==='mid'&&m>=40&&m<=60)||(f==='high'&&m>60);return ok&&mf&&(!estado||p.estado===estado);});const tabela=document.getElementById('pr-tabela');const head='<tr><th></th><th>Produto</th><th>Categoria</th><th>Estado</th><th>Tags</th><th>Fornecedor</th><th>Custo</th><th>Venda</th><th>Lucro/un.</th><th>Margem</th><th>Stock</th><th>Lucro stock</th><th></th></tr>';tabela.innerHTML=head+(lista.length?lista.map(p=>`<tr><td><div class="thumb-admin" style="background-image:url('${String(p.imagemPrincipal||'').replace(/'/g,'%27')}');background-size:cover;background-position:center"></div></td><td><strong>${esc(p.nome)}</strong><small class="linha-meta-admin">${esc(p.skuFornecedor||'Sem SKU')}</small></td><td>${esc(p.categoria||'—')}</td><td><span class="margem-chip ${p.estado==='destaque'?'alta':p.estado==='normal'?'media':'baixa'}">${esc(p.estado)}</span></td><td>${esc(p.etiqueta||'—')}</td><td>${esc(NOMES_FORNECEDOR[p.fornecedor]||p.fornecedor)}</td><td>${eur(p.precoCustoEUR)}</td><td>${eur(p.precoVendaEUR)}</td><td>${eur(p.lucroUnitarioEUR)}</td><td><span class="margem-chip ${Number(p.margemPct)>=60?'alta':Number(p.margemPct)>=40?'media':'baixa'}">${Number(p.margemPct||0).toFixed(1)}%</span></td><td>${p.stock}</td><td>${eur(p.lucroStockEUR)}</td><td><a href="produto-editar.html?id=${p.id}">Editar</a> · <a href="#" onclick="apagarProduto('${p.id}');return false">Apagar</a></td></tr>`).join(''):'<tr><td colspan="13" style="text-align:center;color:#8A7A70">Nenhum produto corresponde aos filtros.</td></tr>');}
-async function carregar(){try{produtos=await apiFetch('/produtos/admin/catalogo');document.getElementById('pr-total').textContent=produtos.length;const avg=produtos.length?produtos.reduce((s,p)=>s+Number(p.margemPct||0),0)/produtos.length:0;document.getElementById('pr-margem-media').textContent=avg.toFixed(1)+'%';document.getElementById('pr-lucro-stock').textContent=eur(produtos.reduce((s,p)=>s+Number(p.lucroStockEUR||0),0));document.getElementById('pr-receita-stock').textContent=eur(produtos.reduce((s,p)=>s+Number(p.precoVendaEUR||0)*Number(p.stock||0),0));render();}catch(e){document.getElementById('pr-tabela').innerHTML='<tr><td colspan="11" style="color:#B14B33">Erro ao carregar: '+e.message+'</td></tr>';}}
-async function apagarProduto(id){if(!confirm('Tem a certeza que quer retirar este produto da loja?'))return;try{await apiFetch('/produtos/'+id,{method:'DELETE'});carregar()}catch(e){alert(e.message)}}
-document.getElementById('pr-busca').oninput=render;document.getElementById('pr-filtro-margem').onchange=render;document.getElementById('pr-filtro-estado').onchange=render;document.getElementById('pr-sync').onclick=async()=>{if(!confirm('Sincronizar todos os produtos CJ ativos? Isto consulta a API real da CJ e pode atualizar custos, preços e stock.'))return;const b=document.getElementById('pr-sync');b.disabled=true;b.textContent='A sincronizar…';try{const r=await apiFetch('/produtos/admin/sincronizar-catalogo',{method:'POST'});alert(`Sincronização concluída: ${r.resultados.filter(x=>x.ok).length}/${r.total} produtos.`);await carregar()}catch(e){alert(e.message)}finally{b.disabled=false;b.textContent='Sincronizar CJ'}};carregar();
-</script>
+<script src="js/extracted/produtos-1-42a387aefd3e.js"></script>
 
   </main>
 </div>

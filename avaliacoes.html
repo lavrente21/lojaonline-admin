@@ -7,8 +7,9 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="admin-body">
+<script src="/js/config.js"></script>
 <script src="js/api.js"></script><script src="js/i18n-admin.js"></script>
-<script>exigirLoginAdmin();</script>
+<script src="js/extracted/avaliacoes-0-a3f1df5fdac0.js"></script>
 <div class="admin-shell">
   <aside class="admin-sidebar">
   <span class="admin-logo">Lúmina · Admin</span>
@@ -33,7 +34,7 @@
     
 <div class="painel-admin" style="padding:0;overflow:hidden"><table class="tabela-simples"><thead><tr><th>Produto</th><th>Cliente</th><th>Nota</th><th>Comentário</th><th>Ação</th></tr></thead><tbody id="reviews-real"><tr><td colspan="5">A carregar...</td></tr></tbody></table></div>
 
-  <script>document.addEventListener('DOMContentLoaded',async()=>{const el=document.getElementById('reviews-real');try{const rows=await apiFetch('/operacoes/admin/avaliacoes');el.innerHTML=rows.length?rows.map(a=>`<tr><td>${a.produto_nome}</td><td>${a.nome_autor}</td><td>${Array.from({length:5},(_,i)=>`<svg viewBox="0 0 24 24" width="15" height="15" fill="${i<a.estrelas?'currentColor':'none'}" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"></path></svg>`).join('')}</td><td>${a.comentario||''}</td><td><button onclick="moderar(${a.id},${!a.aprovado})">${a.aprovado?'Rejeitar':'Aprovar'}</button></td></tr>`).join(''):'<tr><td colspan="5">Ainda não existem avaliações.</td></tr>'}catch(e){el.innerHTML=`<tr><td colspan="5">${e.message}</td></tr>`}});async function moderar(id,aprovado){try{await apiFetch('/operacoes/admin/avaliacoes/'+id,{method:'PUT',body:JSON.stringify({aprovado})});location.reload()}catch(e){alert(e.message)}}</script></main>
+  <script src="js/extracted/avaliacoes-1-36a140d49ca1.js"></script></main>
 </div>
 </body>
 </html>

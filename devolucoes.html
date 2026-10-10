@@ -7,8 +7,9 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="admin-body">
+<script src="/js/config.js"></script>
 <script src="js/api.js"></script><script src="js/i18n-admin.js"></script>
-<script>exigirLoginAdmin();</script>
+<script src="js/extracted/devolucoes-0-0327d3277a1f.js"></script>
 <div class="admin-shell">
   <aside class="admin-sidebar">
   <span class="admin-logo">Lúmina · Admin</span>
@@ -33,7 +34,7 @@
     
 <div class="painel-admin" style="padding:0;overflow:hidden"><table class="tabela-simples"><tr><th>Encomenda</th><th>Cliente</th><th>Motivo</th><th>Estado</th><th>Ação</th></tr><tbody id="devolucoes-real"><tr><td colspan="5">A carregar...</td></tr></tbody></table></div>
 
-  <script>document.addEventListener('DOMContentLoaded',async()=>{const el=document.getElementById('devolucoes-real');try{const rows=await apiFetch('/operacoes/admin/devolucoes');el.innerHTML=rows.length?rows.map(d=>`<tr><td>${d.numero}</td><td>${d.cliente_nome||d.cliente_email||'—'}</td><td>${d.motivo}</td><td>${d.estado}</td><td><select onchange="mudarDev(${d.id},this.value)"><option>${d.estado}</option><option>em_analise</option><option>aprovada</option><option>rejeitada</option><option>recebida</option><option>reembolsada</option><option>cancelada</option></select></td></tr>`).join(''):'<tr><td colspan="5">Ainda não existem solicitações.</td></tr>'}catch(e){el.innerHTML=`<tr><td colspan="5">${e.message}</td></tr>`}});async function mudarDev(id,estado){try{await apiFetch('/operacoes/admin/devolucoes/'+id,{method:'PUT',body:JSON.stringify({estado})})}catch(e){alert(e.message)}}</script></main>
+  <script src="js/extracted/devolucoes-1-95c3c564759e.js"></script></main>
 </div>
 </body>
 </html>
