@@ -8,7 +8,7 @@
 </head>
 <body class="admin-body">
 <script src="/js/config.js"></script>
-<script src="js/api.js"></script><script src="js/i18n-admin.js"></script>
+<script src="js/api.js"></script><script src="js/admin-ui.js"></script><script src="js/i18n-admin.js"></script>
 <script src="js/extracted/pedido-detalhe-0-e0e412b97f18.js"></script>
 <div class="admin-shell">
   <aside class="admin-sidebar">
@@ -32,24 +32,34 @@
       <div class="admin-usuario"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8" r="3.2"></circle><path d="M5.5 20c.7-3.5 2.9-5.4 6.5-5.4s5.8 1.9 6.5 5.4"></path></svg> <span class="admin-nome">Administrador</span> &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
     </div>
     
+<p id="pdd-erro" role="alert" style="display:none;color:#B14B33;font-size:13.5px"></p>
+<div class="painel-admin" id="pdd-resumo">
+  <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center">
+    <div><h2 style="margin-bottom:4px">Estado</h2><div id="pdd-badge">A carregar...</div></div>
+    <div class="admin-acoes-linha" id="pdd-acoes"></div>
+  </div>
+  <p id="pdd-proximo" style="font-size:13.5px;color:#5B4C43;margin-top:12px"></p>
+</div>
+<div class="admin-grid-2">
+  <div class="painel-admin">
+    <h2>Cliente e entrega</h2>
+    <dl class="admin-dados" id="pdd-cliente"></dl>
+  </div>
+  <div class="painel-admin">
+    <h2>Pagamento</h2>
+    <dl class="admin-dados" id="pdd-pagamento"></dl>
+    <div class="admin-lista-comp" id="pdd-comprovativos"></div>
+  </div>
+</div>
 <div class="painel-admin">
-  <h2>Encomenda</h2>
-  <p style="font-size:13.5px;color:#5B4C43;margin-bottom:16px" id="pdd-info">A carregar...</p>
+  <h2>Artigos</h2>
   <div id="pdd-itens"></div>
 </div>
-<div class="painel-admin">
-  <h2>Pagamento e estado</h2>
-  <p id="pdd-pagamento" style="font-size:13.5px;margin-bottom:12px">A carregar...</p>
-  <button class="btn btn-secundario" id="pdd-btn-pago" style="display:none" onclick="marcarPagoPedido()">Marcar como pago</button>
-  <div class="campo-formulario" style="margin-top:14px;max-width:320px"><label>Estado da encomenda</label>
-    <select id="pdd-estado"></select></div>
-  <button class="btn btn-secundario" onclick="guardarEstadoPedido()">Guardar estado</button>
-</div>
 <div class="painel-admin" id="pdd-container-fornecedores">
-  <h2>Envio ao(s) fornecedor(es)</h2>
+  <h2>Envio e rastreio</h2>
+  <p style="font-size:13px;color:#8A7A70;margin-bottom:12px">Com o envio automático desligado, faça a compra no fornecedor, registe aqui o código de rastreio e o estado. O cliente vê o rastreio na conta e na página de rastreio.</p>
   <div id="pdd-fornecedores">A carregar...</div>
 </div>
-<p id="pdd-erro" style="display:none;color:#B14B33;font-size:13.5px"></p>
 <script src="js/extracted/pedido-detalhe-1-5c82e86325e6.js"></script>
 
   </main>

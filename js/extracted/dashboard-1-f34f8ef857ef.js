@@ -1,24 +1,37 @@
-  function escDashboard(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   (async () => {
+    const U = window.AdminUI;
+    const set = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
+    const cartao = (id, n, urgente) => { const a = document.getElementById(id); if(!a) return; a.querySelector('strong').textContent = n; a.classList.toggle('urgente', !!urgente && n > 0); };
     try{
-      const [pedidos, produtos, metrics] = await Promise.all([apiFetch('/pedidos'), apiFetch('/produtos'), apiFetch('/produtos/admin/metrics')]);
-      document.getElementById('db-total-pedidos').textContent = pedidos.length;
-      const receitaEUR = pedidos.filter(p=>p.pagamento?.estado==='pago').reduce((s,p)=>s+Number(p.totalEUR||0),0); document.getElementById('db-receita').dataset.adminEur=receitaEUR; document.getElementById('db-receita').textContent = window.LUMINA_ADMIN.money(receitaEUR);
-      document.getElementById('db-pedidos-aoa').textContent = pedidos.filter(p=>p.moeda==='AOA').length;
-      document.getElementById('db-produtos').textContent = produtos.length;document.getElementById('db-margem').textContent=Number(metrics.resumo.margem_media||0).toFixed(1)+'%';const lucroStockEUR=Number(metrics.resumo.lucro_stock_total||0); document.getElementById('db-lucro-stock').dataset.adminEur=lucroStockEUR; document.getElementById('db-lucro-stock').textContent=window.LUMINA_ADMIN.money(lucroStockEUR);
+      const [resumo, recentes, produtos, metrics] = await Promise.all([
+        apiFetch('/pedidos/admin/resumo'),
+        apiFetch('/pedidos/admin/lista?limite=5'),
+        apiFetch('/produtos'),
+        apiFetch('/produtos/admin/metrics')
+      ]);
+      const por = resumo.porEstado || {};
+      cartao('da-portes', por.aguarda_confirmacao_portes || 0, true);
+      cartao('da-comp', resumo.comprovativosPendentes || 0, true);
+      cartao('da-pagar', por.aguarda_pagamento || 0, false);
+      cartao('da-preparar', por.pago || 0, true);
+      set('db-total-pedidos', resumo.total);
+      const rec = document.getElementById('db-receita'); rec.dataset.adminEur = resumo.receitaEUR; rec.textContent = window.LUMINA_ADMIN.money(resumo.receitaEUR);
+      set('db-pedidos-aoa', resumo.pedidosAOA);
+      set('db-produtos', produtos.length);
+      set('db-margem', Number(metrics.resumo.margem_media || 0).toFixed(1) + '%');
+      const lucro = Number(metrics.resumo.lucro_stock_total || 0);
+      const lc = document.getElementById('db-lucro-stock'); lc.dataset.adminEur = lucro; lc.textContent = window.LUMINA_ADMIN.money(lucro);
 
       const tabela = document.getElementById('db-tabela-pedidos');
-      const cabecalho = '<tr><th>Encomenda</th><th>Moeda</th><th>Rota</th><th>Estado</th><th>Total</th><th></th></tr>';
-      const recentes = pedidos.slice(0, 5);
-      tabela.innerHTML = recentes.length ? cabecalho + recentes.map(p => `
+      const cabecalho = '<tr><th>Encomenda</th><th>Cliente</th><th>Estado</th><th>Total</th><th></th></tr>';
+      tabela.innerHTML = recentes.itens.length ? cabecalho + recentes.itens.map(p => `
         <tr>
-          <td>#${escDashboard(p.numeroPedido)}</td><td>${escDashboard(p.moeda)}</td>
-          <td>${p.rotaEnvio === 'agente_de_carga' ? 'Via agente' : 'Direto'}</td>
-          <td><span class="badge-status">${escDashboard(p.estado)}</span></td>
+          <td>#${U.esc(p.numeroPedido)}</td><td>${U.esc(p.clienteNome || '—')}</td>
+          <td>${U.badge(p.estado)}</td>
           <td data-admin-eur="${p.totalEUR}">${window.LUMINA_ADMIN.money(p.totalEUR)}</td>
           <td><a href="pedido-detalhe.html?numero=${encodeURIComponent(p.numeroPedido)}" style="color:var(--terracota-escuro);font-size:13px">Ver</a></td>
-        </tr>`).join('') : cabecalho + '<tr><td colspan="6" style="text-align:center;color:#8A7A70">Ainda não há pedidos.</td></tr>';
+        </tr>`).join('') : cabecalho + '<tr><td colspan="5" style="text-align:center;color:#8A7A70">Ainda não há pedidos.</td></tr>';
     }catch(e){
-      document.getElementById('db-tabela-pedidos').textContent = 'Erro ao carregar pedidos: '+e.message;
+      document.getElementById('db-tabela-pedidos').textContent = 'Erro ao carregar o painel: ' + e.message;
     }
   })();

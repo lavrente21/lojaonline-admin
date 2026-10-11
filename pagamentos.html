@@ -8,7 +8,7 @@
 </head>
 <body class="admin-body">
 <script src="/js/config.js"></script>
-<script src="js/api.js"></script><script src="js/i18n-admin.js"></script>
+<script src="js/api.js"></script><script src="js/admin-ui.js"></script><script src="js/i18n-admin.js"></script>
 <script src="js/extracted/pagamentos-0-be418dc850bb.js"></script><script src="js/extracted/pagamentos-1-7f3f78c71555.js"></script>
 <div class="admin-shell">
   <aside class="admin-sidebar">
@@ -33,22 +33,32 @@
     </div>
     
 <div class="grade-stats" style="grid-template-columns:repeat(3,1fr)">
-  <div class="cartao-stat"><div class="rotulo-stat">Recebido (mês)</div><div class="valor-stat">—</div></div>
-  <div class="cartao-stat"><div class="rotulo-stat">Reembolsado (mês)</div><div class="valor-stat">—</div></div>
-  <div class="cartao-stat"><div class="rotulo-stat">Pendente</div><div class="valor-stat">—</div></div>
+  <div class="cartao-stat"><div class="rotulo-stat">Portes por confirmar</div><div class="valor-stat" id="st-portes">—</div></div>
+  <div class="cartao-stat"><div class="rotulo-stat">Comprovativos a analisar</div><div class="valor-stat" id="st-comp">—</div></div>
+  <div class="cartao-stat"><div class="rotulo-stat">A aguardar pagamento (EUR)</div><div class="valor-stat" id="st-pagar">—</div></div>
 </div>
 <div class="painel-admin">
-  <h2>Métodos de pagamento</h2>
-  <p id="gw-stripe" style="font-size:14px;margin-bottom:8px">Stripe (fora desta fase) (EUR/USD) — a verificar…</p>
-  <p id="gw-appypay" style="font-size:14px;margin-bottom:8px">AppyPay (fora desta fase) (AOA) — a verificar…</p>
-  <p style="font-size:13px;color:#777">Pagamentos manuais: transferência, depósito ou Multicaixa só aparecem quando configurados no Render. Confirmação e reembolsos ficam sujeitos a permissões e auditoria. O registo do reembolso não executa a transferência ao cliente.</p>
+  <h2>Métodos de pagamento ativos na loja</h2>
+  <p id="metodos-ativos" style="font-size:14px;margin-bottom:8px">A verificar…</p>
+  <p style="font-size:13px;color:#777">Os dados bancários (IBAN, titular, prazo) são definidos nas variáveis de ambiente do Render. Cada confirmação e reembolso fica registado na auditoria. O registo do reembolso não executa a transferência: faça-a no seu banco e registe aqui.</p>
 </div>
 <div class="painel-admin">
   <h2>Transações</h2>
+  <div class="admin-filtros">
+    <select id="pg-filtro" aria-label="Filtrar por estado">
+      <option value="acao">Precisam de ação</option>
+      <option value="aguarda_pagamento">Aguardam pagamento</option>
+      <option value="pago">Pagos</option>
+      <option value="todos">Todos</option>
+    </select>
+    <input type="search" id="pg-busca" placeholder="Procurar por encomenda, nome ou e-mail" aria-label="Procurar">
+  </div>
+  <div class="admin-tabela-scroll">
   <table class="tabela-simples">
-    <thead><tr><th>Encomenda</th><th>Método</th><th>Valor</th><th>Estado</th><th>Ação</th></tr></thead>
-    <tbody id="payments-real"><tr><td colspan="5">A carregar…</td></tr></tbody>
+    <thead><tr><th>Encomenda</th><th>Data</th><th>Método</th><th>Valor</th><th>Estado</th><th>Ações</th></tr></thead>
+    <tbody id="payments-real"><tr><td colspan="6">A carregar…</td></tr></tbody>
   </table>
+  </div>
 </div>
   <script src="js/extracted/pagamentos-2-75fff619f263.js"></script></main>
 </div>

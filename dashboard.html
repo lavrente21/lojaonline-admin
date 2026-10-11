@@ -8,7 +8,7 @@
 </head>
 <body class="admin-body">
 <script src="/js/config.js"></script>
-<script src="js/api.js"></script><script src="js/i18n-admin.js"></script>
+<script src="js/api.js"></script><script src="js/admin-ui.js"></script><script src="js/i18n-admin.js"></script>
 <script src="js/extracted/dashboard-0-5ef95b8ef1b0.js"></script>
 <div class="admin-shell">
   <aside class="admin-sidebar">
@@ -32,10 +32,16 @@
       <div class="admin-usuario"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8" r="3.2"></circle><path d="M5.5 20c.7-3.5 2.9-5.4 6.5-5.4s5.8 1.9 6.5 5.4"></path></svg> <span class="admin-nome">Administrador</span> &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
     </div>
     
+<div class="admin-cartoes-acao" id="db-acoes" aria-label="O que precisa da sua atenção">
+  <a href="pagamentos.html" id="da-portes"><strong>—</strong><span>Portes por confirmar</span></a>
+  <a href="pagamentos.html" id="da-comp"><strong>—</strong><span>Comprovativos a analisar</span></a>
+  <a href="pedidos.html?estado=aguarda_pagamento" id="da-pagar"><strong>—</strong><span>A aguardar pagamento</span></a>
+  <a href="pedidos.html?estado=pago" id="da-preparar"><strong>—</strong><span>Pagos — a preparar</span></a>
+</div>
 <div class="grade-stats" id="db-stats">
   <div class="cartao-stat"><div class="rotulo-stat">Total de pedidos</div><div class="valor-stat" id="db-total-pedidos">—</div></div>
   <div class="cartao-stat"><div class="rotulo-stat">Receita total (EUR)</div><div class="valor-stat" id="db-receita">—</div></div>
-  <div class="cartao-stat"><div class="rotulo-stat">Pedidos pagos em AOA</div><div class="valor-stat" id="db-pedidos-aoa">—</div></div>
+  <div class="cartao-stat"><div class="rotulo-stat">Pedidos em AOA</div><div class="valor-stat" id="db-pedidos-aoa">—</div></div>
   <div class="cartao-stat"><div class="rotulo-stat">Produtos no catálogo</div><div class="valor-stat" id="db-produtos">—</div></div><div class="cartao-stat"><div class="rotulo-stat">Margem média</div><div class="valor-stat" id="db-margem">—</div></div><div class="cartao-stat"><div class="rotulo-stat">Lucro potencial stock</div><div class="valor-stat" id="db-lucro-stock">—</div></div>
 </div>
 <div class="painel-admin">

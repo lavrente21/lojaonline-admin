@@ -8,7 +8,7 @@
 </head>
 <body class="admin-body">
 <script src="/js/config.js"></script>
-<script src="js/api.js"></script><script src="js/i18n-admin.js"></script>
+<script src="js/api.js"></script><script src="js/admin-ui.js"></script><script src="js/i18n-admin.js"></script>
 <script src="js/extracted/pedidos-0-aaf72b1e6f98.js"></script>
 <div class="admin-shell">
   <aside class="admin-sidebar">
@@ -32,16 +32,34 @@
       <div class="admin-usuario"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8" r="3.2"></circle><path d="M5.5 20c.7-3.5 2.9-5.4 6.5-5.4s5.8 1.9 6.5 5.4"></path></svg> <span class="admin-nome">Administrador</span> &nbsp;·&nbsp; <a href="index.html" onclick="limparTokenAdmin()">Sair</a></div>
     </div>
     
-<div class="linha-acoes-admin">
-  <input type="text" placeholder="Procurar por nº ou cliente...">
-  <select><option>Todos os estados</option><option>Novo</option><option>Processando</option><option>Enviado</option><option>Entregue</option></select>
+<div class="admin-filtros">
+  <input type="search" id="pd-busca" placeholder="Procurar por nº, nome ou e-mail do cliente..." aria-label="Procurar pedidos">
+  <select id="pd-estado" aria-label="Filtrar por estado">
+    <option value="">Todos os estados</option>
+    <option value="acao">Precisam de ação</option>
+    <option value="aguarda_confirmacao_portes">Portes por confirmar</option>
+    <option value="aguarda_pagamento">Aguardam pagamento</option>
+    <option value="comprovativo_enviado">Comprovativo a analisar</option>
+    <option value="pago">Pagos — a preparar</option>
+    <option value="em_processamento">Em processamento</option>
+    <option value="enviado_ao_agente">Enviados ao agente</option>
+    <option value="a_caminho">A caminho</option>
+    <option value="a_caminho_destino_final">A caminho do destino final</option>
+    <option value="entregue">Entregues</option>
+    <option value="cancelado">Cancelados</option>
+    <option value="expirado">Expirados</option>
+    <option value="reembolsado">Reembolsados</option>
+  </select>
 </div>
 <div class="painel-admin" style="padding:0;overflow:hidden">
+  <div class="admin-tabela-scroll">
   <table class="tabela-simples" id="pd-tabela">
-    <tr><th>Encomenda</th><th>Data</th><th>Moeda</th><th>Rota</th><th>Estado</th><th>Total</th><th></th></tr>
-    <tr><td colspan="7" style="text-align:center;color:#8A7A70">A carregar...</td></tr>
+    <thead><tr><th>Encomenda</th><th>Data</th><th>Cliente</th><th>País</th><th>Estado</th><th>Total</th><th></th></tr></thead>
+    <tbody id="pd-corpo"><tr><td colspan="7" style="text-align:center;color:#8A7A70">A carregar...</td></tr></tbody>
   </table>
+  </div>
 </div>
+<div class="admin-paginacao" id="pd-paginacao"></div>
 <script src="js/extracted/pedidos-1-03907d470c1b.js"></script>
 
   </main>
